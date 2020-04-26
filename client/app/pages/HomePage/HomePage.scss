@@ -1,0 +1,26 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.logo {
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 32px;
+}
+
+.languages {
+  margin: 50px 0;
+  text-align: center;
+}
+
+.language {
+  display: inline-block;
+  margin-top: 10px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}

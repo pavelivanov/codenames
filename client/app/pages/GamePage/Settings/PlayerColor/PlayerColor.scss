@@ -1,0 +1,35 @@
+.root {
+  color: #717b88;
+}
+
+.color {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  color: #000;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    transition: background-color 0.23s ease;
+  }
+
+  &:hover {
+
+    &::after {
+      background-color: #8b99a7;
+    }
+  }
+
+  &.active {
+
+    &::after {
+      background-color: #000;
+    }
+  }
+}

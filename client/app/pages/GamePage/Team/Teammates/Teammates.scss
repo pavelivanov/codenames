@@ -1,0 +1,35 @@
+.teammate {
+  position: relative;
+  margin-top: 8px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &.redTeam {
+
+    .spyIcon {
+      left: auto;
+      right: calc(100% + 8px);
+    }
+  }
+
+  &.spymaster {
+
+    .spyIcon {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.spyIcon {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 4px;
+  display: block;
+  width: 14px;
+  height: 14px;
+  visibility: hidden;
+  opacity: 0;
+}

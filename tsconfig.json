@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "noEmit": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "paths": {
+      "site/*": [ "site/*" ],
+      "helpers": [ "site/helpers/index.js" ],
+      "helpers/*": [ "site/helpers/*" ],
+      "decorators/*": [ "site/decorators/*" ],
+      "containers/*": [ "site/containers/*" ],
+      "components/*": [ "site/components/*" ],
+      "components": [ "site/components/index.js" ],
+      "pages/*": [ "site/pages/*" ],
+
+      "api": [ "site/api/index.ts" ],
+      "game": [ "site/game/index.ts" ],
+      "socket": [ "site/socket/index.ts" ],
+      "routes": [ "site/routes.tsx" ],
+
+      "base-path": [ "local_modules/base-path/index.js" ],
+      "debounce": [ "local_modules/debounce/index.js" ],
+      "hooks": [ "local_modules/hooks/index.js" ],
+      "hooks/*": [ "local_modules/hooks/*" ],
+
+      "server/*": [ "server/*" ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "include": [
+    "app/**/*",
+    "server/**/*",
+    "local_modules/**/*",
+    "@types/**/*.d.ts"
+  ]
+}

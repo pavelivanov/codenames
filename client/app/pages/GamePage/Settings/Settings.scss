@@ -1,0 +1,164 @@
+.settingsIcon {
+  position: absolute;
+  z-index: 100;
+  bottom: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  transition: transform 0.4s ease;
+
+  &.active {
+    transform: rotate(20deg);
+
+    .icon {
+
+      &.settings {
+        opacity: 0;
+        z-index: 10;
+      }
+
+      &.close {
+        opacity: 1;
+        z-index: 20;
+      }
+    }
+  }
+}
+
+.icon {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  cursor: pointer;
+  transition: opacity 0.23s ease;
+
+  &.settings {
+    width: 24px;
+    height: 24px;
+    opacity: 1;
+    z-index: 20;
+    transform: rotate(0);
+    animation: rotate 7s infinite;
+    animation-timing-function: linear;
+    animation-play-state: paused;
+
+    &:hover {
+      animation-play-state: running;
+    }
+  }
+
+  &.close {
+    width: 20px;
+    height: 20px;
+    transform: rotate(-20deg);
+    opacity: 0;
+    z-index: 10;
+  }
+}
+
+.content {
+  position: absolute;
+  bottom: 12px;
+  right: 74px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: rgba(#fff, 0.9);
+  opacity: 0;
+  visibility: hidden;
+  transform-origin: calc(100% + 42px) center;
+
+  &.animation {
+    opacity: 1;
+    visibility: visible;
+    animation-name: content;
+    animation-duration: 500ms;
+  }
+
+  &.animated {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(0deg);
+  }
+
+  &.reverseAnimation {
+    animation-name: content-reverse;
+    animation-duration: 500ms;
+  }
+}
+
+.item {
+  margin-left: 30px;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  from,
+  to {
+    transform: rotate(-20deg) scale(1);
+  }
+  50% {
+    transform: rotate(-20deg) scale(1.07);
+  }
+}
+
+@keyframes content {
+  from,
+  60%,
+  75%,
+  90%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  from {
+    transform: rotate(-90deg);
+  }
+
+  60% {
+    transform: rotate(4deg);
+  }
+
+  75% {
+    transform: rotate(-2deg);
+  }
+
+  90% {
+    transform: rotate(1deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes content-reverse {
+  from {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(0deg);
+  }
+
+  to {
+    opacity: 0;
+    transform: rotate(-90deg);
+  }
+}

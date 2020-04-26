@@ -1,0 +1,17 @@
+.team {
+  text-align: center;
+
+  &.red {
+
+    .title {
+      color: $red-team-color;
+    }
+  }
+
+  &.blue {
+
+    .title {
+      color: $blue-team-color;
+    }
+  }
+}
