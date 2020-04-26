@@ -54,4 +54,5 @@ type Game = {
   cards: string[]
   colors: CardColor[]
   revealedCards: string[]
+  winner: TeamColor
 }

@@ -1,5 +1,4 @@
-.teammate {
-  position: relative;
+.teammateContainer {
   margin-top: 8px;
 
   &:first-child {
@@ -10,7 +9,7 @@
 
     .spyIcon {
       left: auto;
-      right: calc(100% + 8px);
+      right: calc(100% + 10px);
     }
   }
 
@@ -23,10 +22,14 @@
   }
 }
 
+.teammate {
+  position: relative;
+}
+
 .spyIcon {
   position: absolute;
-  left: calc(100% + 8px);
-  top: 4px;
+  left: calc(100% + 10px);
+  top: 2px;
   display: block;
   width: 14px;
   height: 14px;

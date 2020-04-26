@@ -5,7 +5,7 @@ import modPath from 'app-module-path'
 const modules = [
   '',
   'local_modules',
-  'site',
+  'app',
 ]
 
 

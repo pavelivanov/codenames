@@ -4,7 +4,6 @@ import basePath from 'base-path'
 
 
 const isDev           = process.env.NODE_ENV === 'development'
-const onlyLocals      = process.env.WEBPACK === 'build.server'
 const localIdentName  = isDev ? '[local]__[hash:base64:3]' : '[hash:base64:6]'
 const loaders         = []
 
@@ -13,7 +12,7 @@ if (isDev) {
     loader: 'style-loader',
   })
 }
-else if (process.env.WEBPACK === 'build.client') {
+else {
   loaders.push(MiniCssExtractPlugin.loader)
 }
 
@@ -22,7 +21,7 @@ loaders.push(
     loader: 'css-loader',
     options: {
       sourceMap: !isDev,
-      onlyLocals: onlyLocals,
+      onlyLocals: false,
       importLoaders: 2,
       modules: {
         context: __dirname,
@@ -49,7 +48,7 @@ loaders.push(
   {
     loader: 'sass-loader',
     options: {
-      data: '@import "./scss/index";',
+      data: '@import "~scss/index";',
       includePaths: [
         basePath('site'),
       ],

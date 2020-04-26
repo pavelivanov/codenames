@@ -5,11 +5,7 @@ const config = {
         targets: {
           browsers: [
             'last 2 versions',
-            'Safari >= 9',
-            'IE >= 11',
-            'iOS >= 9',
           ],
-          node: 'current',
         },
         useBuiltIns: 'usage',
         corejs: '3',
@@ -20,10 +16,10 @@ const config = {
   ],
   plugins: [
     '@babel/plugin-transform-runtime',
-    '@babel/plugin-syntax-dynamic-import',
+    // '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-transform-destructuring',
-    '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-object-rest-spread',
+    // '@babel/plugin-proposal-class-properties',
+    // '@babel/plugin-proposal-object-rest-spread',
   ],
 }
 

@@ -2,10 +2,9 @@ import React, { Fragment, useState, useMemo, useEffect } from 'react'
 import { useGameState } from 'game'
 import socket from 'socket'
 
-import gameConnection from 'decorators/gameConnection'
-
 import { Row } from 'components'
 
+import ConnectionWrapper from './ConnectionWrapper/ConnectionWrapper'
 import Settings from './Settings/Settings'
 import Team from './Team/Team'
 import Field from './Field/Field'
@@ -18,18 +17,22 @@ const GamePage = () => {
   const [ players, setPlayers ] = useState(initialPlayers)
 
   useEffect(() => {
-    socket.on('player joined game', (player) => {
+    setPlayers(initialPlayers)
+  }, [ initialPlayers ])
+
+  useEffect(() => {
+    const handlePlayerJoinGame = (player) => {
       setPlayers((players) => [
         ...players,
         player,
       ])
-    })
+    }
 
-    socket.on('player left game', (playername) => {
+    const handlePlayerLeftGame = (playername) => {
       setPlayers((players) => (
         players.filter((player) => player.playername !== playername)
       ))
-    })
+    }
 
     const handlePlayerChangeColor = ({ playername, color }) => {
       setPlayers((players) => (
@@ -46,8 +49,7 @@ const GamePage = () => {
       ))
     }
 
-    socket.on('color changed', (color) => handlePlayerChangeColor({ playername: me.playername, color }))
-    socket.on('player changed color', handlePlayerChangeColor)
+    const handleSelfColorChange = (color) => handlePlayerChangeColor({ playername: me.playername, color })
 
     const handlePlayerChangeMode = ({ playername, mode }) => {
       setPlayers((players) => (
@@ -64,8 +66,34 @@ const GamePage = () => {
       ))
     }
 
-    socket.on('mode changed', (mode) => handlePlayerChangeMode({ playername: me.playername, mode }))
+    const handleSelfModeChange = (mode) => handlePlayerChangeMode({ playername: me.playername, mode })
+
+    const handleGameEnd = () => {
+      setPlayers((players) => (
+        players.map((player) => ({
+          ...player,
+          mode: 'player',
+        }))
+      ))
+    }
+
+    socket.on('player joined game', handlePlayerJoinGame)
+    socket.on('player left game', handlePlayerLeftGame)
+    socket.on('color changed', handleSelfColorChange)
+    socket.on('player changed color', handlePlayerChangeColor)
+    socket.on('mode changed', handleSelfModeChange)
     socket.on('player changed mode', handlePlayerChangeMode)
+    socket.on('game ended', handleGameEnd)
+
+    return () => {
+      socket.off('player joined game', handlePlayerJoinGame)
+      socket.off('player left game', handlePlayerLeftGame)
+      socket.off('color changed', handleSelfColorChange)
+      socket.off('player changed color', handlePlayerChangeColor)
+      socket.off('mode changed', handleSelfModeChange)
+      socket.off('player changed mode', handlePlayerChangeMode)
+      socket.off('game ended', handleGameEnd)
+    }
   }, [])
 
   const redTeam = useMemo(() => (
@@ -91,5 +119,11 @@ const GamePage = () => {
   )
 }
 
+const GamePageWrapper = () => (
+  <ConnectionWrapper>
+    <GamePage/>
+  </ConnectionWrapper>
+)
 
-export default gameConnection(GamePage)
+
+export default GamePageWrapper

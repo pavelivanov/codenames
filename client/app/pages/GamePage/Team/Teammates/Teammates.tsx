@@ -19,15 +19,17 @@ const Teammates: React.FunctionComponent<TeammatesProps> = ({ teamColor, players
       players.map(({ playername, mode }) => {
         const spymaster = mode === 'spymaster'
 
-        const className = cx(s.teammate, {
+        const className = cx(s.teammateContainer, {
           [s.redTeam]: teamColor === 'red',
           [s.spymaster]: spymaster,
         })
 
         return (
           <div key={playername} className={className} title={mode}>
-            <Text size="16-24" light>{playername}</Text>
-            <img className={s.spyIcon} src={eyeIcon} alt="" />
+            <span className={s.teammate} title={mode}>
+              <Text size="16-24" tag="span" light>{playername}</Text>
+              <img className={s.spyIcon} src={eyeIcon} alt="" />
+            </span>
           </div>
         )
       })

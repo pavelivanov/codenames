@@ -1,12 +1,12 @@
 import webpack from 'webpack'
 import basePath from 'base-path'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 import rulesMap from './rules'
 
 
 const globals = {
   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-  'process.env.WEBPACK': JSON.stringify(process.env.WEBPACK),
 }
 
 const rules = Object.keys(rulesMap)
@@ -20,7 +20,7 @@ const webpackConfig = {
     rules,
   },
   resolve: {
-    modules: [ 'local_modules', 'node_modules', 'site' ],
+    modules: [ 'local_modules', 'node_modules', 'app' ],
     extensions: [ '.js', '.ts', '.tsx', '.scss' ],
     plugins: [],
   },
@@ -32,10 +32,11 @@ const webpackConfig = {
   },
   plugins: [
     new webpack.DefinePlugin(globals),
-    new webpack.ContextReplacementPlugin(
-      /moment[/\\]locale$/,
-      /en-gb/
-    ),
+    new HtmlWebpackPlugin({
+      inject: true,
+      filename: 'index.html',
+      template: basePath('app/index.html'),
+    }),
   ],
 }
 

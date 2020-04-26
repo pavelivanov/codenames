@@ -76,18 +76,11 @@ const games: { [key: string]: Game } = {}
 // https://socket.io/docs/emit-cheatsheet/
 
 io.on('connection', (socket) => {
-  let isConnected = false
-
   console.log('player connected')
 
-  socket.on('add player', (playername) => {
-    if (isConnected) return
-
-    isConnected = true
-
+  socket.on('login', (playername) => {
     socket.playername = playername
-
-    socket.emit('login')
+    socket.emit('logged in')
   })
 
   const createGame = (id?: string) => {
@@ -101,6 +94,7 @@ io.on('connection', (socket) => {
       cards,
       colors,
       revealedCards: [],
+      winner: null,
     }
 
     games[gameId] = game
@@ -135,10 +129,11 @@ io.on('connection', (socket) => {
     socket.emitGame('player joined game', player)
   })
 
-  socket.on('leave game', () => {
-    const { id: gameId } = socket.game
-
-    if (socket.game) {
+  socket.on('leave game', (gameId?: string) => {
+    if (
+      gameId && socket.game.id === gameId
+      || !gameId && socket.game
+    ) {
       leaveGame(gameId)
       socket.emit('game left')
     }
@@ -215,17 +210,41 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on('disconnect', () => {
-    if (isConnected) {
-      console.log('player disconnected', socket.playername)
+  socket.on('start new game', () => {
+    const prevGame = socket.game
+    const newGame = createGame()
 
-      isConnected = false
+    if (prevGame) {
+      newGame.players = prevGame.players.map((player) => ({
+        ...player,
+        mode: 'player',
+      }))
+    }
 
-      if (socket.game) {
-        const { id: gameId } = socket.game
+    io.of('/').in(prevGame.id).clients((err, clients) => {
+      if (!err && clients) {
+        clients.forEach((socketId) => {
+          const socket = io.of('/').sockets[socketId]
 
-        leaveGame(gameId)
+          if (prevGame) {
+            socket.leave(prevGame.id)
+          }
+
+          socket.game = newGame
+          socket.join(newGame.id)
+          io.to(socketId).emit('new game started', newGame)
+        })
       }
+    })
+  })
+
+  socket.on('disconnect', () => {
+    console.log('player disconnected', socket.playername)
+
+    if (socket.game) {
+      const { id: gameId } = socket.game
+
+      leaveGame(gameId)
     }
   })
 

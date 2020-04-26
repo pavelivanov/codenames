@@ -5,8 +5,7 @@
   "ext": "*.ts",
   "watch": [
     "./bin",
-    "./server",
-    "./local_modules",
+    "./app",
     "package.json"
   ],
   "ignore": [],

@@ -34,11 +34,17 @@ const TeamCardCount: React.FunctionComponent<TeamCardCountProps> = ({ teamColor 
   const [ count, setCount ] = useState<number>(initialCount)
 
   useEffect(() => {
-    socket.on('card revealed', ({ color }) => {
+    const handleCardReveal = ({ color }) => {
       if (color === teamColor) {
         setCount((count) => --count)
       }
-    })
+    }
+
+    socket.on('card revealed', handleCardReveal)
+
+    return () => {
+      socket.off('card revealed', handleCardReveal)
+    }
   }, [])
 
   return (

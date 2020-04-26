@@ -1,0 +1,60 @@
+.auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.input {
+  height: 50px;
+  padding: 0 16px;
+  border: 2px solid #000;
+  border-right: 0;
+  font-size: 22px;
+}
+
+.input::placeholder {
+  font-size: 22px;
+  font-weight: 200;
+  color: #000;
+  opacity: 1;
+}
+
+.input::-moz-placeholder {
+  font-size: 22px;
+  font-weight: 200;
+  color: #000;
+  opacity: 1;
+}
+
+.input:-ms-input-placeholder {
+  font-size: 22px;
+  font-weight: 200;
+  color: #000;
+  opacity: 1;
+}
+
+.input::-webkit-input-placeholder {
+  font-size: 22px;
+  font-weight: 200;
+  color: #000;
+  opacity: 1;
+}
+
+.button {
+  height: 50px;
+  cursor: pointer;
+  padding: 0 16px;
+  background-color: #000;
+  font-weight: 200;
+  font-size: 28px;
+  color: #fff;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.note {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 300;
+}

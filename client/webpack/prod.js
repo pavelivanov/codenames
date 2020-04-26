@@ -1,11 +1,9 @@
 import webpack from 'webpack'
 import basePath from 'base-path'
 import TerserPlugin from 'terser-webpack-plugin'
-import AssetsPlugin from 'assets-webpack-plugin'
 import { ReactLoadablePlugin } from 'react-loadable/webpack'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-// import SentryWebpackPlugin from '@sentry/webpack-plugin'
 
 import webpackConfig from './default'
 
@@ -21,14 +19,14 @@ webpackConfig.target = 'web'
 webpackConfig.devtool = 'source-map'
 
 webpackConfig.entry = {
-  client: basePath('site/index'),
+  client: basePath('app/index'),
 }
 
 webpackConfig.output = {
   path: output,
   filename: 'js/[name].[chunkhash].js',
   chunkFilename: 'js/[id].[chunkhash].chunk.js',
-  publicPath: '/assets/',
+  publicPath: '/',
 }
 
 webpackConfig.plugins.push(
@@ -39,16 +37,6 @@ webpackConfig.plugins.push(
   new MiniCssExtractPlugin({
     filename: 'css/[name].[contenthash].css',
   }),
-  new AssetsPlugin({
-    path: output,
-    filename: 'assets.json',
-    fullPath: false,
-    update: true,
-    prettyPrint: true,
-  }),
-  // new SentryWebpackPlugin({
-  //   include: basePath('build/js'),
-  // }),
 )
 
 webpackConfig.optimization = {

@@ -3,7 +3,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 const loaders = []
 
-if (process.env.WEBPACK === 'build.client') {
+if (process.env.NODE_ENV === 'production') {
   loaders.push(MiniCssExtractPlugin.loader)
 }
 

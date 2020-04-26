@@ -16,9 +16,15 @@ const HomePage = () => {
   const [ lang, setLang ] = useState(languages[0])
 
   useEffect(() => {
-    socket.on('game created', ({ gameId }) => {
+    const handleGameCreate = ({ gameId }) => {
       history.push(`/game/${gameId}`)
-    })
+    }
+
+    socket.on('game created', handleGameCreate)
+
+    return () => {
+      socket.off('game created', handleGameCreate)
+    }
   }, [])
 
   const handleSelectLang = useCallback((language) => {
@@ -48,7 +54,7 @@ const HomePage = () => {
             ))
           }
         </div>
-        <button type="button" onClick={handleClick}>Create game</button>
+        <button className={s.button} type="button" onClick={handleClick}>Create game</button>
       </div>
     </div>
   )

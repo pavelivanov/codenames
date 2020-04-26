@@ -16,24 +16,23 @@
       "es2017"
     ],
     "paths": {
-      "site/*": [ "site/*" ],
-      "helpers": [ "site/helpers/index.js" ],
-      "helpers/*": [ "site/helpers/*" ],
-      "decorators/*": [ "site/decorators/*" ],
-      "containers/*": [ "site/containers/*" ],
-      "components/*": [ "site/components/*" ],
-      "components": [ "site/components/index.js" ],
-      "pages/*": [ "site/pages/*" ],
+      "helpers": [ "client/app/helpers/index.js" ],
+      "helpers/*": [ "client/app/helpers/*" ],
+      "decorators/*": [ "client/app/decorators/*" ],
+      "containers/*": [ "client/app/containers/*" ],
+      "components/*": [ "client/app/components/*" ],
+      "components": [ "client/app/components/index.js" ],
+      "pages/*": [ "client/app/pages/*" ],
 
-      "api": [ "site/api/index.ts" ],
-      "game": [ "site/game/index.ts" ],
-      "socket": [ "site/socket/index.ts" ],
-      "routes": [ "site/routes.tsx" ],
+      "api": [ "client/app/api/index.ts" ],
+      "game": [ "client/app/game/index.ts" ],
+      "socket": [ "client/app/socket/index.ts" ],
+      "routes": [ "client/app/routes.tsx" ],
 
-      "base-path": [ "local_modules/base-path/index.js" ],
-      "debounce": [ "local_modules/debounce/index.js" ],
-      "hooks": [ "local_modules/hooks/index.js" ],
-      "hooks/*": [ "local_modules/hooks/*" ],
+      "base-path": [ "client/local_modules/base-path/index.js" ],
+      "debounce": [ "client/local_modules/debounce/index.js" ],
+      "hooks": [ "client/local_modules/hooks/index.js" ],
+      "hooks/*": [ "client/local_modules/hooks/*" ],
 
       "server/*": [ "server/*" ]
     }
@@ -43,9 +42,10 @@
     "**/*.spec.ts"
   ],
   "include": [
-    "app/**/*",
-    "server/**/*",
-    "local_modules/**/*",
-    "@types/**/*.d.ts"
+    "client/app/**/*",
+    "server/app/**/*",
+    "client/local_modules/**/*",
+    "@types/**/*.d.ts",
+    "typings/global.d.ts"
   ]
 }

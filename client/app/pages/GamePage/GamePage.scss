@@ -1,5 +1,5 @@
 .logo {
-  position: absolute;
+  position: fixed;
   top: 18px;
   left: 20px;
   text-transform: uppercase;
@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100%;
-  padding: 0 30px;
+  padding: 30px;
 }
 
 .copylink {
@@ -21,16 +21,4 @@
   font-weight: 300;
   font-size: 16px;
   color: #1d7eff;
-}
-
-.settings {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  opacity: 0.5;
-  transition: opacity 0.23s ease;
-
-  &:hover {
-    opacity: 1;
-  }
 }
