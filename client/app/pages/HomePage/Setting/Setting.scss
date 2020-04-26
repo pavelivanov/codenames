@@ -1,11 +1,27 @@
-.root {
+.cell {
+  padding-top: 30px;
+}
+
+.label {
+  padding-right: 40px;
+  text-align: right;
+  font-weight: 200;
+  font-size: 28px;
   color: #717b88;
 }
 
-.mode {
+.values {
+  display: flex;
+  margin: -12px;
+}
+
+.value {
   position: relative;
+  margin: 12px;
   cursor: pointer;
   user-select: none;
+  font-weight: 300;
+  font-size: 28px;
   color: #000;
 
   &::after {

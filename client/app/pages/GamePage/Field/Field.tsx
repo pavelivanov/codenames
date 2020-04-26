@@ -1,9 +1,7 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import { useReducerState } from 'hooks'
 import { useGameState } from 'game'
 import socket from 'socket'
-
-import { Row } from 'components'
 
 import Card from './Card/Card'
 
@@ -13,67 +11,71 @@ import s from './Field.scss'
 type State = {
   revealedCards: string[]
   spied: boolean
-  // gameEnded: boolean
+  gameEnded: boolean
 }
 
-const Field = () => {
-  const { me: { mode: initialMode }, cards, colors, revealedCards: initialRevealedCards, winner: initialWinner } = useGameState()
+type FieldProps = {
+  mode: PlayerMode
+  cards: string[]
+  colors: CardColor[]
+  revealedCards: string[]
+  winner: TeamColor
+}
+
+const FieldWrapper = () => {
+  const { me: { mode }, cards, colors, revealedCards, winner } = useGameState()
+
+  return (
+    <Field {...{ mode, cards, colors, revealedCards, winner }} />
+  )
+}
+
+const Field: React.FunctionComponent<FieldProps> = React.memo((props) => {
+  const { mode: initialMode, cards, colors, revealedCards: initialRevealedCards, winner: initialWinner } = props
 
   const [ state, setState ] = useReducerState<State>({
     revealedCards: initialRevealedCards,
     spied: initialMode === 'spymaster',
-    // gameEnded: Boolean(initialWinner),
+    gameEnded: Boolean(initialWinner),
   })
 
   const { revealedCards, spied, gameEnded } = state
 
-  // useEffect(() => {
-  //   setState({
-  //     spied: initialMode === 'spymaster',
-  //     revealedCards: initialRevealedCards,
-  //     gameEnded: Boolean(initialWinner),
-  //   })
-  // }, [ initialMode, initialRevealedCards, initialWinner ])
-
   useEffect(() => {
-    const handleModeChange = (mode) => {
+    const handleModeChange = (mode: PlayerMode) => {
       setState({ spied: mode === 'spymaster' })
     }
 
-    const handleCardReveal = ({ name }) => {
+    const handleCardReveal = ({ name: cardName }: { name: string }) => {
       setState(({ revealedCards }) => ({
         revealedCards: [
           ...revealedCards,
-          name,
-        ]
+          cardName,
+        ],
       }))
     }
 
-    // const handleGameEnd = () => {
-    //   setState({ spied: false, gameEnded: true })
-    // }
+    const handleGameEnd = () => {
+      setState({ gameEnded: true })
+    }
 
     socket.on('mode changed', handleModeChange)
     socket.on('card revealed', handleCardReveal)
-    // socket.on('game ended', handleGameEnd)
+    socket.on('game ended', handleGameEnd)
 
     return () => {
       socket.off('mode changed', handleModeChange)
       socket.off('card revealed', handleCardReveal)
-      // socket.off('game ended', handleGameEnd)
+      socket.off('game ended', handleGameEnd)
     }
   }, [])
-
-  // const handleStartNewGame = useCallback(() => {
-  //   socket.emit('start new game')
-  // }, [])
 
   return (
     <div>
       <div className={s.cards}>
         {
           cards.slice(0, 25).map((name, index) => {
-            const revealed = gameEnded || revealedCards.includes(name)
+            const revealed = revealedCards.includes(name)
             const color = colors[index]
 
             return (
@@ -84,16 +86,9 @@ const Field = () => {
           })
         }
       </div>
-      {/*
-        gameEnded && (
-          <Row justify="center">
-            <button className={s.button} type="button" onClick={handleStartNewGame}>Start new game</button>
-          </Row>
-        )
-      */}
     </div>
   )
-}
+})
 
 
-export default React.memo(Field)
+export default FieldWrapper

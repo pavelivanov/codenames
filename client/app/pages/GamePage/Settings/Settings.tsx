@@ -1,65 +1,76 @@
-import React, { Fragment, useRef, useState, useCallback } from 'react'
+import React, { useRef, useMemo, useEffect } from 'react'
+import { useGameState } from 'game'
 import cx from 'classnames'
 
 import s from './Settings.scss'
 
-import settingsIcon from './images/settings.svg'
-import closeIcon from './images/close.svg'
-
-import PlayerColor from './PlayerColor/PlayerColor'
-import PlayerMode from './PlayerMode/PlayerMode'
+import Setting from './Setting/Setting'
 
 
-const Settings = () => {
-  const [ active, setActive ] = useState(false)
+type SettingItems = [
+  {
+    label: string
+    values: string[]
+    initialValue: TeamColor
+    name: string
+  },
+  {
+    label: string
+    values: string[]
+    initialValue: PlayerMode
+    name: string
+  }
+]
 
-  const iconRef = useRef<HTMLDivElement>()
-  const contentRef = useRef<HTMLDivElement>()
+type SettingsProps = {
+  color: TeamColor
+  mode: PlayerMode
+}
 
-  const animateNode = useCallback((node, reverse) => {
-    const handleAnimationEnd = () => {
-      if (!reverse) {
-        node.classList.add(s.animated)
-      }
-      node.classList.remove(!reverse ? s.animation : s.reverseAnimation)
-      node.removeEventListener('animationend', handleAnimationEnd)
-    }
-
-    node.classList.remove(s.animated)
-    node.classList.add(!reverse ? s.animation : s.reverseAnimation)
-    node.addEventListener('animationend', handleAnimationEnd)
-  }, [])
-
-  const handleClick = useCallback(() => {
-    animateNode(contentRef.current, active)
-
-    if (active) {
-      iconRef.current.classList.remove(s.active)
-    }
-    else {
-      iconRef.current.classList.add(s.active)
-    }
-
-    setActive((active) => !active)
-  }, [ active ])
+const SettingsWrapper = () => {
+  const { me: { color, mode } } = useGameState()
 
   return (
-    <Fragment>
-      <div ref={iconRef} className={s.settingsIcon} onClick={handleClick}>
-        <img className={cx(s.icon, s.settings)} src={settingsIcon} alt="" />
-        <img className={cx(s.icon, s.close)} src={closeIcon} alt="" />
-      </div>
-      <div ref={contentRef} className={s.content}>
-        <div className={s.item}>
-          <PlayerColor />
-        </div>
-        <div className={s.item}>
-          <PlayerMode />
-        </div>
-      </div>
-    </Fragment>
+    <Settings {...{ color, mode }} />
   )
 }
 
+const Settings: React.FunctionComponent<SettingsProps> = React.memo(({ color, mode }) => {
+  const ref = useRef<HTMLDivElement>()
 
-export default Settings
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     ref.current.classList.remove(s.alwaysVisible)
+  //   }, 5 * 1000)
+  // }, [])
+
+  const settings = useMemo<SettingItems>(() => [
+    {
+      label: 'my team color',
+      values: [ 'red', 'blue' ],
+      initialValue: color,
+      name: 'color',
+    },
+    {
+      label: 'I am a',
+      values: [ 'player', 'spymaster' ],
+      initialValue: mode,
+      name: 'mode',
+    },
+  ], [])
+
+  return (
+    <div ref={ref} className={cx(s.settings, s.alwaysVisible)}>
+      {
+        settings.map((setting, index) => (
+          <div key={index} className={s.item}>
+            <Setting {...setting} />
+          </div>
+        ))
+      }
+    </div>
+  )
+})
+
+
+export default SettingsWrapper

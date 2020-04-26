@@ -1,113 +1,110 @@
 import React, { useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useReducerState } from 'hooks'
-import { GameState, GameStateContext } from 'game'
 import cookie from 'js-cookie'
 import socket from 'socket'
 
-import { Loader } from 'components'
+import { Loader, Row, Text } from 'components'
 
 import Auth from './Auth/Auth'
+import GameStateWrapper from './GameStateWrapper/GameStateWrapper'
 
 import s from './ConnectionWrapper.scss'
 
 
-type State = {
-  playername: string
+type ConnectionState = {
+  game: Game
+  playerName: string
   isConnecting: boolean
   isConnected: boolean
 }
 
 const ConnectionWrapper = ({ children }) => {
-  const playername = cookie.get('playername')
+  const history = useHistory()
+  const { gameId } = useParams()
 
-  const initialState = {
-    playername,
+  const [ state, setState ] = useReducerState<ConnectionState>({
+    game: null,
+    playerName: cookie.get('playerName'),
     isConnecting: true,
     isConnected: false,
-  }
+  })
+  
+  const { game, playerName, isConnecting, isConnected } = state
 
-  const initialGameState: GameState = {
-    id: null,
-    creator: null,
-    me: null,
-    players: null,
-    cards: null,
-    colors: null,
-    revealedCards: null,
-    winner: null,
-  }
-
-  const { gameId } = useParams()
-  const [ state, setState ] = useReducerState<State>(initialState)
-  const [ gameState, setGameState ] = useReducerState<Game>(initialGameState)
-  const { isConnecting, isConnected } = state
-
-  const joinGame = useCallback(() => {
-    const color = cookie.get('color')
-
-    socket.emit('join game', { gameId, color })
-  }, [])
+  console.log(444, { game, playerName, isConnecting, isConnected })
 
   useEffect(() => {
-    if (playername) {
-      socket.emit('login', playername)
+    if (playerName) {
+      const playerColor = cookie.get('playerColor')
+
+      socket.emit('login', { name: playerName, color: playerColor })
     }
 
     const handleLogin = () => {
-      setState({ playername: cookie.get('playername') })
-      joinGame()
+      setState({ playerName: cookie.get('playerName') })
+      socket.emit('join game', gameId)
     }
 
     const handleGameJoin = (game: Game) => {
-      setGameState(game)
-      setState({ isConnecting: false, isConnected: true })
+      setState({ 
+        game, 
+        playerName: cookie.get('playerName'),
+        isConnecting: false, 
+        isConnected: true,
+      })
     }
 
-    const handleNewGameStart = (game) => {
-      setState({ isConnecting: true })
-
-      setTimeout(() => {
-        setGameState(game)
-        setState({ isConnecting: false })
-      }, 1000)
+    const handleGameNotFound = () => {
+      setState({ 
+        isConnecting: false, 
+        isConnected: false,
+      })
     }
 
     socket.on('logged in', handleLogin)
     socket.on('game joined', handleGameJoin)
-    socket.on('new game started', handleNewGameStart)
+    socket.on('game not found', handleGameNotFound)
 
     return () => {
       socket.emit('leave game', gameId)
       socket.off('logged in', handleLogin)
       socket.off('game joined', handleGameJoin)
-      socket.off('new game started', handleNewGameStart)
+      socket.off('game not found', handleGameNotFound)
     }
   }, [ gameId ])
 
-  if (!playername) {
+  const handleGoHome = useCallback(() => {
+    history.push('/')
+  }, [])
+
+  if (!playerName) {
     return <Auth />
   }
 
   if (isConnecting) {
     return (
-      <div className={s.loaderContainer}>
+      <div className={s.wrapper}>
         <Loader />
       </div>
     )
   }
 
   if (!isConnected) {
-    return <div>Game not found</div>
+    return (
+      <div className={s.wrapper}>
+        <Row>
+          <Text size="38-48" light>Game not found</Text>
+          <button className={s.button} type="button" onClick={handleGoHome}>Go Home</button>
+        </Row>
+      </div>
+    )
   }
 
-  const myUsername = cookie.get('playername')
-  const me = gameState.players.find((player) => player.playername === myUsername)
-
   return (
-    <GameStateContext.Provider value={{ ...gameState, me }}>
+    <GameStateWrapper game={game}>
       {children}
-    </GameStateContext.Provider>
+    </GameStateWrapper>
   )
 }
 

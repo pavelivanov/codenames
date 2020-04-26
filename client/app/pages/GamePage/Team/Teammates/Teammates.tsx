@@ -16,7 +16,7 @@ type TeammatesProps = {
 const Teammates: React.FunctionComponent<TeammatesProps> = ({ teamColor, players }) => (
   <div>
     {
-      players.map(({ playername, mode }) => {
+      players.map(({ name, mode }) => {
         const spymaster = mode === 'spymaster'
 
         const className = cx(s.teammateContainer, {
@@ -25,9 +25,9 @@ const Teammates: React.FunctionComponent<TeammatesProps> = ({ teamColor, players
         })
 
         return (
-          <div key={playername} className={className} title={mode}>
+          <div key={name} className={className} title={mode}>
             <span className={s.teammate} title={mode}>
-              <Text size="16-24" tag="span" light>{playername}</Text>
+              <Text size="16-24" tag="span">{name}</Text>
               <img className={s.spyIcon} src={eyeIcon} alt="" />
             </span>
           </div>

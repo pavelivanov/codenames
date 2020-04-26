@@ -9,10 +9,11 @@ const Auth = () => {
   const inputRef = useRef<HTMLInputElement>()
 
   const handleClick = useCallback(() => {
-    const playername = inputRef.current.value
+    const playerName = inputRef.current.value
+    const playerColor = cookie.get('playerColor')
 
-    cookie.set('playername', playername)
-    socket.emit('login', playername)
+    cookie.set('playerName', playerName)
+    socket.emit('login', { name: playerName, color: playerColor })
   }, [])
 
   return (

@@ -5,13 +5,22 @@ import socket from 'socket'
 import s from './Card.scss'
 
 
-const Card = ({ name, color, revealed, spied, gameEnded }) => {
+type CardProps = {
+  name: string
+  color: CardColor
+  revealed: boolean
+  spied: boolean
+  gameEnded: boolean
+}
+
+const Card: React.FunctionComponent<CardProps> = ({ name, color, revealed, spied, gameEnded }) => {
   const cardRef = useRef<HTMLDivElement>()
   const zIndexRef = useRef(20)
 
   const handleClick = useCallback(() => {
     if (!revealed && !spied && !gameEnded) {
-      cardRef.current.style.zIndex = String(++zIndexRef.current)
+      zIndexRef.current += 1
+      cardRef.current.style.zIndex = String(zIndexRef.current)
       socket.emit('reveal card', name)
     }
   }, [ revealed, spied, gameEnded ])
@@ -25,10 +34,10 @@ const Card = ({ name, color, revealed, spied, gameEnded }) => {
 
   return (
     <div ref={cardRef} className={cardClassName} onClick={handleClick}>
-      <div className={s.content}>
+      <div className={s.titleContainer}>
         <div className={s.title}>{name}</div>
-        <div className={s.backdrop} />
       </div>
+      <div className={s.background} />
     </div>
   )
 }

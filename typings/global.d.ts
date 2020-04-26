@@ -39,9 +39,10 @@ interface Window {
 type TeamColor = 'red' | 'blue'
 type CardColor = 'red' | 'blue' | 'neutral'
 type PlayerMode = 'player' | 'spymaster'
+type PlayerName = string
 
 type Player = {
-  playername: string
+  name: PlayerName
   admin?: boolean
   color: TeamColor
   mode: PlayerMode

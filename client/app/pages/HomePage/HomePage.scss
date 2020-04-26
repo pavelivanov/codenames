@@ -1,44 +1,36 @@
-.page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%;
-}
-
 .content {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 50px 0;
 }
 
 .logo {
   text-transform: uppercase;
-  line-height: 36px;
   font-weight: 300;
-  font-size: 32px;
+  font-size: 48px;
 }
 
-.languages {
-  display: none;
-  margin: 50px 0;
-  text-align: center;
-}
-
-.language {
-  display: inline-block;
-  margin-top: 10px;
-
-  &:first-child {
-    margin-top: 0;
-  }
+.settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding-bottom: 50px;
 }
 
 .button {
-  height: 36px;
+  height: 60px;
   cursor: pointer;
-  padding: 0 10px;
+  padding: 0 30px;
   margin-left: 8px;
   background-color: #000;
   font-weight: 200;
-  font-size: 28px;
+  font-size: 30px;
   color: #fff;
   text-transform: uppercase;
   outline: none;

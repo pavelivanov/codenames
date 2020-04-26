@@ -1,8 +1,8 @@
-.root {
+.setting {
   color: #717b88;
 }
 
-.color {
+.value {
   position: relative;
   cursor: pointer;
   user-select: none;
@@ -12,7 +12,7 @@
     content: '';
     display: block;
     position: absolute;
-    bottom: -2px;
+    bottom: 0;
     left: 0;
     right: 0;
     height: 1px;
@@ -27,6 +27,7 @@
   }
 
   &.active {
+    cursor: default;
 
     &::after {
       background-color: #000;

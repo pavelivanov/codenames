@@ -5,7 +5,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import createIO from 'socket.io'
 
-import { en as neWords, ru as ruWords } from './words'
+import { en as enWords, ru as ruWords } from './words'
 
 
 const PORT = 3007
@@ -24,6 +24,11 @@ server.listen(PORT, () => {
   console.log(`Server running on localhost:${PORT}`)
 })
 
+
+const words = {
+  'english': enWords,
+  'russian': ruWords,
+}
 
 const shuffle = (arr) => {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -50,11 +55,21 @@ const getRandomizedArr = (arr, count) => {
   return result
 }
 
-const getCards = () => {
-  const redCount      = 8 + Math.round(Math.random())
-  const blueCount     = 17 - redCount
-  const neutralCount  = 7
-  const blackCount    = 1
+const getGameData = ({ fieldSize = '5x5', language = 'English' }) => {
+  const counts = {
+    '36': [ 13, 12, 9, 2 ],
+    '30': [ 11, 10, 8, 1 ],
+    '25': [ 9, 8, 7, 1 ],
+    '20': [ 7, 6, 6, 1 ],
+  }
+
+  const [ colCount, rowCount ] = fieldSize.split('x')
+  const cellCount = Number(colCount) * Number(rowCount)
+  
+  const [ count1, count2, neutralCount, blackCount ] = counts[String(cellCount)]
+  
+  const redCount = Math.round(Math.random()) ? count1 : count2
+  const blueCount = count1 + count2 - redCount
 
   const colors = shuffle([
     ...new Array(redCount).fill('red'),
@@ -63,7 +78,7 @@ const getCards = () => {
     ...new Array(blackCount).fill('black'),
   ])
 
-  const cards = getRandomizedArr(ruWords, 25)
+  const cards = getRandomizedArr(words[language.toLowerCase()], cellCount)
 
   return {
     cards,
@@ -75,21 +90,29 @@ const games: { [key: string]: Game } = {}
 
 // https://socket.io/docs/emit-cheatsheet/
 
-io.on('connection', (socket) => {
+type SocketState = {
+  name: string
+  color: TeamColor
+}
+
+io.on('connection', (socket: any) => {
   console.log('player connected')
 
-  socket.on('login', (playername) => {
-    socket.playername = playername
+  socket.state = {} as SocketState
+
+  socket.on('login', ({ name, color }: { name: string, color: TeamColor }) => {
+    socket.state.name = name
+    socket.state.color = color
     socket.emit('logged in')
   })
 
-  const createGame = (id?: string) => {
-    const gameId = id || uniqid()
-    const { cards, colors } = getCards()
+  socket.on('create game', ({ fieldSize, language }) => {
+    const gameId = uniqid()
+    const { cards, colors } = getGameData({ fieldSize, language })
 
-    const game = {
+    games[gameId] = {
       id: gameId,
-      creator: socket.playername,
+      creator: socket.state.name,
       players: [],
       cards,
       colors,
@@ -97,163 +120,143 @@ io.on('connection', (socket) => {
       winner: null,
     }
 
-    games[gameId] = game
-
-    return game
-  }
-
-  socket.on('create game', () => {
-    const game = createGame()
-
-    socket.emit('game created', { gameId: game.id })
+    socket.emit('game created', { gameId })
   })
 
-  socket.on('join game', ({ gameId, color }) => {
-    const game = games[gameId] || createGame(gameId)
+  socket.on('join game', (gameId: string) => {
+    const game = games[gameId]
 
-    const player: Player = socket.player || {
-      playername: socket.playername,
-      admin: socket.playername === game.creator,
-      color: color || 'red', // TODO get color by team sizes
-      mode: 'player',
+    if (game) {
+      const player: Player = socket.player || {
+        name: socket.state.name,
+        admin: socket.state.name === game.creator,
+        color: socket.state.color || 'red',
+        mode: 'player',
+      }
+  
+      game.players.push(player)
+  
+      socket.state.game = game
+      socket.state.player = player
+      socket.emitGame = (event: string, message?: any) => socket.to(gameId).emit(event, message)
+  
+      socket.join(gameId)
+      socket.emit('game joined', game)
+      socket.emitGame('player joined game', player)
     }
-
-    game.players.push(player)
-
-    socket.game = game
-    socket.player = player
-    socket.emitGame = (event: string, message?: any) => socket.to(gameId).emit(event, message)
-
-    socket.join(gameId)
-    socket.emit('game joined', game)
-    socket.emitGame('player joined game', player)
+    else {
+      socket.emit('game not found', gameId)
+    }
   })
 
   socket.on('leave game', (gameId?: string) => {
-    if (
-      gameId && socket.game.id === gameId
-      || !gameId && socket.game
-    ) {
+    const { game } = socket.state
+
+    if (game && game.id === gameId) {
       leaveGame(gameId)
       socket.emit('game left')
     }
   })
 
-  socket.on('change player color', (color) => {
-    socket.player.color = color
-
-    socket.game.players = socket.game.players.map((player) => {
-      if (player.playername === socket.playername) {
-        return socket.player
-      }
-
-      return player
-    })
+  socket.on('change player color', (color: TeamColor) => {
+    socket.state.color = color
+    socket.state.player.color = color
 
     socket.emit('color changed', color)
-    socket.emitGame('player changed color', { playername: socket.playername, color })
+    socket.emitGame('player changed color', { name: socket.state.player.name, color })
   })
 
-  socket.on('change player mode', (mode) => {
-    socket.player.mode = mode
-
-    socket.game.players = socket.game.players.map((player) => {
-      if (player.playername === socket.playername) {
-        return socket.player
-      }
-
-      return player
-    })
+  socket.on('change player mode', (mode: PlayerMode) => {
+    socket.state.player.mode = mode
 
     socket.emit('mode changed', mode)
-    socket.emitGame('player changed mode', { playername: socket.playername, mode })
+    socket.emitGame('player changed mode', { name: socket.state.player.name, mode })
   })
 
-  socket.on('reveal card', (name) => {
-    if (socket.game && !socket.game.winner) {
-      const index = socket.game.cards.indexOf(name)
+  socket.on('reveal card', (cardName: string) => {
+    const { game, player } = socket.state
+
+    if (game && !game.winner) {
+      const index = game.cards.indexOf(cardName)
+      const color = game.colors[index]
 
       if (index < 0) {
         return
       }
 
-      const color = socket.game.colors[index]
-      const card = { name, color }
+      game.revealedCards.push(cardName)
 
-      socket.game.revealedCards.push(name)
-      socket.emit('card revealed', card)
-      socket.emitGame('card revealed', card)
+      socket.emit('card revealed', { name: cardName, color })
+      socket.emitGame('card revealed', { name: cardName, color })
 
       if (color === 'black') {
-        socket.game.winner = socket.player.color === 'red' ? 'blue' : 'red'
+        game.winner = player.color === 'red' ? 'blue' : 'red'
 
-        socket.emit('game ended', { winner: socket.game.winner, blackOpened: true })
-        socket.emitGame('game ended', { winner: socket.game.winner, blackOpened: true })
+        socket.emit('game ended', { winner: game.winner, blackOpened: true })
+        socket.emitGame('game ended', { winner: game.winner, blackOpened: true })
       }
       else {
-        const { cards, colors } = socket.game
+        const { cards, colors } = game
 
-        const namesToColors = cards.reduce((obj, name) => {
-          obj[name] = colors[cards.indexOf(name)]
+        const namesToColors = cards.reduce((obj, cardName) => {
+          obj[cardName] = colors[cards.indexOf(cardName)]
           return obj
         }, {})
 
-        const unrevealedCount = cards.filter((name) => namesToColors[name] === socket.player.color).length
+        const unrevealedCount = cards.filter((cardName) => namesToColors[cardName] === player.color).length
 
         if (unrevealedCount === 0) {
-          socket.game.winner = socket.playercolor
+          game.winner = player.color
 
-          socket.emit('game ended', { winner: socket.game.winner })
-          socket.emitGame('game ended', { winner: socket.game.winner })
+          socket.emit('game ended', { winner: game.winner })
+          socket.emitGame('game ended', { winner: game.winner })
         }
       }
     }
   })
 
-  socket.on('start new game', () => {
-    const prevGame = socket.game
-    const newGame = createGame()
+  // socket.on('start new game', () => {
+  //   const prevGame = socket.game
+  //   const newGame = createGame()
 
-    if (prevGame) {
-      newGame.players = prevGame.players.map((player) => ({
-        ...player,
-        mode: 'player',
-      }))
-    }
+  //   if (prevGame) {
+  //     newGame.players = prevGame.players.map((player) => ({
+  //       ...player,
+  //       mode: 'player',
+  //     }))
+  //   }
 
-    io.of('/').in(prevGame.id).clients((err, clients) => {
-      if (!err && clients) {
-        clients.forEach((socketId) => {
-          const socket = io.of('/').sockets[socketId]
+  //   io.of('/').in(prevGame.id).clients((err, clients) => {
+  //     if (!err && clients) {
+  //       clients.forEach((socketId) => {
+  //         const socket = io.of('/').sockets[socketId]
 
-          if (prevGame) {
-            socket.leave(prevGame.id)
-          }
+  //         if (prevGame) {
+  //           socket.leave(prevGame.id)
+  //         }
 
-          socket.game = newGame
-          socket.join(newGame.id)
-          io.to(socketId).emit('new game started', newGame)
-        })
-      }
-    })
-  })
+  //         socket.game = newGame
+  //         socket.join(newGame.id)
+  //         io.to(socketId).emit('new game started', newGame)
+  //       })
+  //     }
+  //   })
+  // })
 
   socket.on('disconnect', () => {
-    console.log('player disconnected', socket.playername)
+    console.log('player disconnected', socket.state.player && socket.state.player.name)
 
-    if (socket.game) {
-      const { id: gameId } = socket.game
-
-      leaveGame(gameId)
+    if (socket.state.game) {
+      leaveGame(socket.state.game.id)
     }
   })
 
-  const leaveGame = (gameId) => {
+  const leaveGame = (gameId: string) => {
     socket.leave(gameId)
-    socket.emitGame('player left game', socket.playername)
+    socket.emitGame('player left game', socket.state.player.name)
 
-    socket.game.players = socket.game.players.filter(({ playername }) => playername !== socket.playername)
-    socket.game = null
+    socket.state.game.players = socket.state.game.players.filter(({ name }) => name !== socket.state.player.name)
+    socket.state.game = null
+    socket.state.player = null
   }
 })
-
