@@ -264,7 +264,7 @@ io.on('connection', (socket: any) => {
   socket.on('reveal card', (cardName: string) => {
     const { game, player } = socket.state
 
-    if (game.revealedCards.includes(cardName)) {
+    if (game && game.revealedCards.includes(cardName)) {
       return
     }
 
