@@ -9,6 +9,7 @@ import s from './HomePage.scss'
 
 const languages = [ 'English', 'Russian' ]
 const fieldSizes = [ /* '6x6', */ '6x5', '5x5', '5x4' ]
+const timerValues = [ 'On', 'Off' ]
 
 const HomePage = () => {
   const history = useHistory()
@@ -17,7 +18,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const handleGameCreate = ({ gameId }) => {
-      history.push(`/game/${gameId}`)
+      history.push(`/board/${gameId}`)
     }
 
     socket.on('game created', handleGameCreate)
@@ -52,11 +53,20 @@ const HomePage = () => {
       activeValue: fieldSize,
       onSelect: handleSelectFieldSize,
     },
+    // {
+    //   label: 'Timer',
+    //   values: timerValues,
+    //   activeValue: 'Off',
+    //   dev: true,
+    // },
   ]), [ fieldSize, language ])
 
   return (
     <div className={s.content}>
-      <div className={s.logo}>CODENAMES</div>
+      <h1 className={s.logo}>
+        <a href="//codenames.wtf">CODENAMES</a>
+      </h1>
+      <p className={s.intro}>Play Codenames online now! Call your friends over Zoom, Skype, Hangouts or Facetime and play!</p>
       <div className={s.settings}>
         <table>
           <tbody>
@@ -69,6 +79,7 @@ const HomePage = () => {
         </table>
       </div>
       <button className={s.button} type="button" onClick={handleSubmit}>Create game</button>
+      <a className={s.rules} href="https://en.wikipedia.org/wiki/Codenames_(board_game)" target="_blank">Game rules</a>
     </div>
   )
 }

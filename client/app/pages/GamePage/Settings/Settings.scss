@@ -1,12 +1,6 @@
 .settings {
-  position: fixed;
-  bottom: 8px;
-  right: 16px;
-  z-index: 100;
   display: flex;
   align-items: center;
-  padding: 10px;
-  background-color: rgba(#fff, 0.9);
   opacity: 0.3;
   transition: opacity 0.5s ease;
 

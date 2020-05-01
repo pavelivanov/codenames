@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 import { useReducerState } from 'hooks'
 import { useGameState } from 'game'
 import socket from 'socket'
+import cx from 'classnames'
 
 import Card from './Card/Card'
 
@@ -23,15 +25,16 @@ type FieldProps = {
 }
 
 const FieldWrapper = () => {
-  const { me: { mode }, cards, colors, revealedCards, winner } = useGameState()
+  const { me: { mode }, fieldSize, cards, colors, revealedCards, winner } = useGameState()
 
   return (
-    <Field {...{ mode, cards, colors, revealedCards, winner }} />
+    <Field {...{ fieldSize, mode, cards, colors, revealedCards, winner }} />
   )
 }
 
 const Field: React.FunctionComponent<FieldProps> = React.memo((props) => {
-  const { mode: initialMode, cards, colors, revealedCards: initialRevealedCards, winner: initialWinner } = props
+  const { gameId } = useParams()
+  const { fieldSize, mode: initialMode, cards, colors, revealedCards: initialRevealedCards, winner: initialWinner } = props
 
   const [ state, setState ] = useReducerState<State>({
     revealedCards: initialRevealedCards,
@@ -70,11 +73,15 @@ const Field: React.FunctionComponent<FieldProps> = React.memo((props) => {
     }
   }, [])
 
+  const handleStartNewGame = useCallback(() => {
+    socket.emit('start new game', gameId)
+  }, [])
+
   return (
     <div>
-      <div className={s.cards}>
+      <div className={cx(s.cards, s[`size${fieldSize}`])}>
         {
-          cards.slice(0, 25).map((name, index) => {
+          cards.map((name, index) => {
             const revealed = revealedCards.includes(name)
             const color = colors[index]
 
@@ -86,6 +93,13 @@ const Field: React.FunctionComponent<FieldProps> = React.memo((props) => {
           })
         }
       </div>
+      {
+        gameEnded && (
+          <div className={s.buttonContainer}>
+            <button className={s.startNewGameButton} onClick={handleStartNewGame}>Start new game</button>
+          </div>
+        )
+      }
     </div>
   )
 })

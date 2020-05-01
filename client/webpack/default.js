@@ -1,6 +1,7 @@
 import webpack from 'webpack'
 import basePath from 'base-path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 
 import rulesMap from './rules'
 
@@ -36,7 +37,23 @@ const webpackConfig = {
       inject: true,
       filename: 'index.html',
       template: basePath('app/index.html'),
+      ga: process.env.NODE_ENV !== 'production' ? '' : `
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-165035140-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'UA-165035140-1');
+        </script>
+      `
     }),
+    new CopyWebpackPlugin([
+      {
+        from: basePath('app/assets'),
+        to: basePath('build'),
+      },
+    ]),
   ],
 }
 

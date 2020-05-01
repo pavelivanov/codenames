@@ -1,24 +1,77 @@
-.logo {
-  position: fixed;
-  top: 18px;
-  left: 20px;
-  text-transform: uppercase;
-  font-weight: 400;
-  font-size: 22px;
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
+.headline {
+  position: relative;
+  padding: 20px;
+  line-height: 20px;
+}
+
+.logo {
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 24px;
+
+  a:any-link {
+    color: #000;
+  }
+}
+
+
+// Content
+
 .content {
+  min-height: 1px;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
-  padding: 30px;
+  padding: 20px;
 }
 
-.copylink {
-  cursor: pointer;
-  border-bottom: 1px solid #1d7eff;
-  font-weight: 300;
-  font-size: 16px;
-  color: #1d7eff;
+.column {
+  display: flex;
+  justify-content: center;
+  width: 200px;
+}
+
+
+// Footer
+
+.basement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.buyACoffeeLink {
+  position: relative;
+  height: 18px;
+  color: #ff9258;
+  transition: color 0.4s ease;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ff5900;
+    opacity: 0.4;
+    transition: opacity 0.4s ease;
+  }
+
+  &:hover {
+    color: #ff5900;
+
+    &::after {
+      opacity: 0.6;
+    }
+  }
 }

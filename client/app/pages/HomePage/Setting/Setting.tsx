@@ -11,10 +11,17 @@ type SettingProps = {
   onSelect: (value: any) => void
 }
 
-const Setting: React.FunctionComponent<SettingProps> = ({ label, values, activeValue, onSelect }) => (
+const Setting: React.FunctionComponent<SettingProps> = ({ label, values, activeValue, dev, onSelect }) => (
   <tr>
     <td className={s.cell}>
-      <div className={s.label}>{label}</div>
+      <span className={s.labelContainer}>
+        {
+          dev && (
+            <span className={s.dev}>Will be soon!</span>
+          )
+        }
+        <span className={cx(s.label, { [s.disabled]: dev })}>{label}</span>
+      </span>
     </td>
     <td className={s.cell}>
       <div className={s.values}>
@@ -24,6 +31,7 @@ const Setting: React.FunctionComponent<SettingProps> = ({ label, values, activeV
               key={value}
               className={cx(s.value, { 
                 [s.active]: value === activeValue,
+                [s.disabled]: dev,
               })}
               onClick={() => onSelect(value)}
             >

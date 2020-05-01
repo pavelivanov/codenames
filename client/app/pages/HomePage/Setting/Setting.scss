@@ -1,13 +1,25 @@
 .cell {
   padding-top: 30px;
+
+  &:first-child {
+    padding-right: 40px;
+    text-align: right;
+  }
+}
+
+.labelContainer {
+  position: relative;
 }
 
 .label {
-  padding-right: 40px;
   text-align: right;
   font-weight: 200;
-  font-size: 28px;
+  font-size: 24px;
   color: #717b88;
+
+  &.disabled {
+    opacity: 0.5;
+  }
 }
 
 .values {
@@ -21,7 +33,7 @@
   cursor: pointer;
   user-select: none;
   font-weight: 300;
-  font-size: 28px;
+  font-size: 24px;
   color: #000;
 
   &::after {
@@ -45,7 +57,29 @@
   &.active {
 
     &::after {
-      background-color: #000;
+      background-color: #000 !important;
     }
   }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: default;
+    color: #717b88;
+
+    &:hover {
+      
+      &::after {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+.dev {
+  position: absolute;
+  right: calc(100% + 16px);
+  white-space: nowrap;
+  font-weight: 200;
+  font-size: 24px;
+  color: #f10741;
 }

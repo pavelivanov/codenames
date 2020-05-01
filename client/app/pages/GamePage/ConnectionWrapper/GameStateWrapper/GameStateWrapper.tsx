@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react'
 import { useReducerState } from 'hooks'
+import { useHistory } from 'react-router-dom'
 import { GameState, GameStateContext } from 'game'
 import cookie from 'js-cookie'
 import socket from 'socket'
 
 
 const useGameState = (initialGameState: GameState) => {
+  const history = useHistory()
   const [ state, setState ] = useReducerState<GameState>(initialGameState)
   const { me } = state
 
@@ -22,10 +24,10 @@ const useGameState = (initialGameState: GameState) => {
       }))
     }
 
-    const handlePlayerChangeColor = ({ playerName, color }) => {
+    const handlePlayerChangeColor = ({ name, color }) => {
       setState(({ players }) => ({
         players: players.map((player) => {
-          if (player.name === playerName) {
+          if (player.name === name) {
             return { ...player, color }
           }
 
@@ -34,21 +36,21 @@ const useGameState = (initialGameState: GameState) => {
       }))
     }
 
-    const handleSelfColorChange = (color: TeamColor) => handlePlayerChangeColor({ playerName: me.name, color })
+    const handleSelfColorChange = (color: TeamColor) => handlePlayerChangeColor({ name: me.name, color })
 
-    const handlePlayerChangeMode = ({ playerName, mode }) => {
+    const handlePlayerChangeMode = ({ name, mode }) => {
       setState(({ players }) => ({
         players: players.map((player) => {
-          if (player.name === playerName) {
+          if (player.name === name) {
             return { ...player, mode }
           }
 
           return player
-        }), 
+        }),
       }))
     }
 
-    const handleSelfModeChange = (mode: PlayerMode) => handlePlayerChangeMode({ playerName: me.name, mode })
+    const handleSelfModeChange = (mode: PlayerMode) => handlePlayerChangeMode({ name: me.name, mode })
 
     const handleGameEnd = () => {
       setState(({ players }) => ({
@@ -59,6 +61,10 @@ const useGameState = (initialGameState: GameState) => {
       }))
     }
 
+    const handleNewGameStart = (gameId) => {
+      window.location.replace(`/board/${gameId}?newgame=true`)
+    }
+
     socket.on('player joined game', handlePlayerJoinGame)
     socket.on('player left game', handlePlayerLeftGame)
     socket.on('color changed', handleSelfColorChange)
@@ -66,6 +72,7 @@ const useGameState = (initialGameState: GameState) => {
     socket.on('mode changed', handleSelfModeChange)
     socket.on('player changed mode', handlePlayerChangeMode)
     socket.on('game ended', handleGameEnd)
+    socket.on('new game started', handleNewGameStart)
 
     return () => {
       socket.off('player joined game', handlePlayerJoinGame)
@@ -75,8 +82,9 @@ const useGameState = (initialGameState: GameState) => {
       socket.off('mode changed', handleSelfModeChange)
       socket.off('player changed mode', handlePlayerChangeMode)
       socket.off('game ended', handleGameEnd)
+      socket.off('new game started', handleNewGameStart)
     }
-  }, [])
+  }, [ me ])
 
   return state
 }

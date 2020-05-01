@@ -15,5 +15,5 @@
 // font-size: vwx(14);
 //
 @function vwx($value) {
-  @return (0.2667vw * strip-unit($value));
+  @return (0.12315vw * strip-unit($value));
 }

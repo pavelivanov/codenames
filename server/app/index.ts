@@ -4,6 +4,7 @@ import uniqid from 'uniqid'
 import express from 'express'
 import bodyParser from 'body-parser'
 import createIO from 'socket.io'
+import cron from 'node-cron'
 
 import { en as enWords, ru as ruWords } from './words'
 
@@ -14,16 +15,78 @@ const server = http.createServer(app)
 const io = createIO(server)
 const router = express.Router()
 
-
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(router)
+app.use('/rest', router)
+
+router.get('/check-name-taken', (req, res) => {
+  const { gameId, name } = req.query
+
+  if (!games[gameId]) {
+    res.status(404)
+    res.send({ message: 'Game with this ID not found' })
+  }
+  else {
+    const taken = Boolean(
+      games[gameId]
+      && games[gameId].players.find((player) => (
+        player.name.toLowerCase() === name.toLowerCase()
+      ))
+    )
+
+    res.send({ taken })
+  }
+})
+
+router.get('/games', (req, res) => {
+  if (req.query.secret === 'dfvgbh') {
+    const items = Object.keys(games).reduce(((arr, gameId) => [ ...arr, games[gameId] ]), [])
+
+    res.send({ items })
+  }
+  else {
+    res.status(403)
+    res.send({ message: 'Get out!' })
+  }
+})
+
+router.get('/clear', (req, res) => {
+  if (req.query.secret === 'dfvgbh') {
+    clearGames()
+    res.status(204)
+    res.end()
+  }
+})
 
 server.listen(PORT, () => {
   console.log(`Server running on localhost:${PORT}`)
 })
 
+const clearGames = () => {
+  const now: number = +new Date()
+
+  Object.keys(games).forEach((gameId) => {
+    const { updatedAt } = games[gameId]
+
+    const gameLastUpdateDate: number = +new Date(updatedAt)
+    const diffDays = (now - gameLastUpdateDate) / (1000 * 60 * 60 * 24)
+
+    if (diffDays > 0.5) {
+      delete games[gameId]
+    }
+  })
+}
+
+if (process.env.NODE_ENV === 'production') {
+  cron.schedule('0 12 * * 1-5', clearGames, {
+    timezone: 'Europe/Moscow',
+    scheduled: true,
+  })
+}
+
+
+// ---------------------------------------------------------------------------------------------
 
 const words = {
   'english': enWords,
@@ -65,9 +128,9 @@ const getGameData = ({ fieldSize = '5x5', language = 'English' }) => {
 
   const [ colCount, rowCount ] = fieldSize.split('x')
   const cellCount = Number(colCount) * Number(rowCount)
-  
+
   const [ count1, count2, neutralCount, blackCount ] = counts[String(cellCount)]
-  
+
   const redCount = Math.round(Math.random()) ? count1 : count2
   const blueCount = count1 + count2 - redCount
 
@@ -86,6 +149,25 @@ const getGameData = ({ fieldSize = '5x5', language = 'English' }) => {
   }
 }
 
+const hash = (colors) => {
+  const hashes = {
+    red: [ 1, 5, 8, 13, 27, 33, 41, 56, 72 ],
+    blue: [ 3, 7, 11, 29, 31, 37, 55, 67, 81 ],
+    neutral: [ 2, 4, 9, 14, 28, 44, 59, 77, 80 ],
+    black: [ 6, 10, 15, 22, 34, 36, 46 ],
+  }
+
+  return colors.map((color) => {
+    const maxIndex  = hashes[color].length - 1
+    const index     = Math.floor(Math.random() * maxIndex)
+
+    return hashes[color][index]
+  })
+}
+
+
+// --------------------------------------------------------------------------------------
+
 const games: { [key: string]: Game } = {}
 
 // https://socket.io/docs/emit-cheatsheet/
@@ -100,48 +182,54 @@ io.on('connection', (socket: any) => {
 
   socket.state = {} as SocketState
 
-  socket.on('login', ({ name, color }: { name: string, color: TeamColor }) => {
-    socket.state.name = name
-    socket.state.color = color
-    socket.emit('logged in')
-  })
-
-  socket.on('create game', ({ fieldSize, language }) => {
+  const createGame = ({ fieldSize, language }) => {
     const gameId = uniqid()
     const { cards, colors } = getGameData({ fieldSize, language })
 
     games[gameId] = {
       id: gameId,
+      fieldSize,
+      language,
       creator: socket.state.name,
       players: [],
       cards,
       colors,
       revealedCards: [],
       winner: null,
+      updatedAt: new Date(),
     }
 
-    socket.emit('game created', { gameId })
+    return games[gameId]
+  }
+
+  socket.on('create game', ({ fieldSize, language }) => {
+    const game = createGame({ fieldSize, language })
+
+    socket.emit('game created', { gameId: game.id })
   })
 
-  socket.on('join game', (gameId: string) => {
+  socket.on('join game', ({ gameId, name, color }: { gameId: string, name: string, color: TeamColor }) => {
     const game = games[gameId]
 
     if (game) {
-      const player: Player = socket.player || {
-        name: socket.state.name,
-        admin: socket.state.name === game.creator,
+      const player: Player = socket.state.player || {
+        name,
+        admin: name === game.creator,
         color: socket.state.color || 'red',
         mode: 'player',
       }
-  
+
       game.players.push(player)
-  
+      game.updatedAt = new Date()
+
       socket.state.game = game
       socket.state.player = player
+      socket.state.name = name
+      socket.state.color = color
       socket.emitGame = (event: string, message?: any) => socket.to(gameId).emit(event, message)
-  
+
       socket.join(gameId)
-      socket.emit('game joined', game)
+      socket.emit('game joined', { ...game, colors: hash(game.colors) })
       socket.emitGame('player joined game', player)
     }
     else {
@@ -176,34 +264,41 @@ io.on('connection', (socket: any) => {
   socket.on('reveal card', (cardName: string) => {
     const { game, player } = socket.state
 
-    if (game && !game.winner) {
-      const index = game.cards.indexOf(cardName)
-      const color = game.colors[index]
+    if (game.revealedCards.includes(cardName)) {
+      return
+    }
 
-      if (index < 0) {
+    if (game && !game.winner) {
+      const openedCardIndex = game.cards.indexOf(cardName)
+      const openedCardColor = game.colors[openedCardIndex]
+
+      if (openedCardIndex < 0) {
         return
       }
 
       game.revealedCards.push(cardName)
+      game.updatedAt = new Date()
 
-      socket.emit('card revealed', { name: cardName, color })
-      socket.emitGame('card revealed', { name: cardName, color })
+      socket.emit('card revealed', { name: cardName, color: openedCardColor })
+      socket.emitGame('card revealed', { name: cardName, color: openedCardColor })
 
-      if (color === 'black') {
+      if (openedCardColor === 'black') {
         game.winner = player.color === 'red' ? 'blue' : 'red'
 
         socket.emit('game ended', { winner: game.winner, blackOpened: true })
         socket.emitGame('game ended', { winner: game.winner, blackOpened: true })
       }
       else {
-        const { cards, colors } = game
+        const { cards, colors, revealedCards } = game
 
         const namesToColors = cards.reduce((obj, cardName) => {
           obj[cardName] = colors[cards.indexOf(cardName)]
           return obj
         }, {})
 
-        const unrevealedCount = cards.filter((cardName) => namesToColors[cardName] === player.color).length
+        const totalCount      = cards.filter((cardName) => namesToColors[cardName] === openedCardColor).length
+        const revealedCount   = revealedCards.filter((cardName) => namesToColors[cardName] === openedCardColor).length
+        const unrevealedCount = totalCount - revealedCount
 
         if (unrevealedCount === 0) {
           game.winner = player.color
@@ -215,33 +310,31 @@ io.on('connection', (socket: any) => {
     }
   })
 
-  // socket.on('start new game', () => {
-  //   const prevGame = socket.game
-  //   const newGame = createGame()
+  socket.on('start new game', (prevGameId) => {
+    const prevGame = games[prevGameId]
 
-  //   if (prevGame) {
-  //     newGame.players = prevGame.players.map((player) => ({
-  //       ...player,
-  //       mode: 'player',
-  //     }))
-  //   }
+    if (!prevGame) {
+      return
+    }
 
-  //   io.of('/').in(prevGame.id).clients((err, clients) => {
-  //     if (!err && clients) {
-  //       clients.forEach((socketId) => {
-  //         const socket = io.of('/').sockets[socketId]
+    const newGame = createGame({
+      fieldSize: prevGame.fieldSize,
+      language: prevGame.language,
+    })
 
-  //         if (prevGame) {
-  //           socket.leave(prevGame.id)
-  //         }
+    io.of('/').in(prevGameId).clients((err, clients) => {
+      if (!err && clients) {
+        clients.forEach((socketId) => {
+          const socket = io.of('/').sockets[socketId]
 
-  //         socket.game = newGame
-  //         socket.join(newGame.id)
-  //         io.to(socketId).emit('new game started', newGame)
-  //       })
-  //     }
-  //   })
-  // })
+          socket.leave(prevGameId)
+          delete games[prevGameId]
+
+          io.to(socketId).emit('new game started', newGame.id)
+        })
+      }
+    })
+  })
 
   socket.on('disconnect', () => {
     console.log('player disconnected', socket.state.player && socket.state.player.name)
@@ -255,7 +348,19 @@ io.on('connection', (socket: any) => {
     socket.leave(gameId)
     socket.emitGame('player left game', socket.state.player.name)
 
-    socket.state.game.players = socket.state.game.players.filter(({ name }) => name !== socket.state.player.name)
+    if (games[gameId]) {
+      games[gameId].players = games[gameId].players.filter(({ name }) => name !== socket.state.player.name)
+      games[gameId].updatedAt = new Date()
+
+      if (games[gameId].players.length === 0) {
+        setTimeout(() => {
+          if (games[gameId] && games[gameId].players.length === 0) {
+            delete games[gameId]
+          }
+        }, 5000)
+      }
+    }
+
     socket.state.game = null
     socket.state.player = null
   }

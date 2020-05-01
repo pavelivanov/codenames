@@ -62,7 +62,7 @@ webpackConfig.optimization = {
   },
   minimizer: [
     new TerserPlugin({
-      sourceMap: true,
+      sourceMap: false,
       parallel: 4,
     }),
     new OptimizeCSSAssetsPlugin(),

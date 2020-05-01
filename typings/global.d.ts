@@ -37,7 +37,7 @@ interface Window {
 
 
 type TeamColor = 'red' | 'blue'
-type CardColor = 'red' | 'blue' | 'neutral'
+type CardColor = 'red' | 'blue' | 'neutral' | 'black'
 type PlayerMode = 'player' | 'spymaster'
 type PlayerName = string
 
@@ -50,10 +50,13 @@ type Player = {
 
 type Game = {
   id: string
+  fieldSize: '6x6' | '6x5' | '5x5' | '5x4'
+  language: string
   creator: string
   players: Player[]
   cards: string[]
   colors: CardColor[]
   revealedCards: string[]
   winner: TeamColor
+  updatedAt: Date
 }

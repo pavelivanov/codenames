@@ -15,7 +15,7 @@ const routes = (
   <App>
     <Switch>
       <Route path="/" exact component={HomePage} />
-      <Route path="/game/:gameId" exact component={GamePage} />
+      <Route path="/board/:gameId" exact component={GamePage} />
       <Route path="*" component={NotFound} />
     </Switch>
   </App>

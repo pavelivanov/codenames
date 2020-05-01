@@ -27,7 +27,7 @@ const Teammates: React.FunctionComponent<TeammatesProps> = ({ teamColor, players
         return (
           <div key={name} className={className} title={mode}>
             <span className={s.teammate} title={mode}>
-              <Text size="16-24" tag="span">{name}</Text>
+              <Text className={s.name} size="16-24" tag="span">{name}</Text>
               <img className={s.spyIcon} src={eyeIcon} alt="" />
             </span>
           </div>

@@ -26,9 +26,9 @@ const Card: React.FunctionComponent<CardProps> = ({ name, color, revealed, spied
   }, [ revealed, spied, gameEnded ])
 
   const cardClassName = cx(s.card, {
-    [s[color]]: revealed || spied,
+    [s[color]]: revealed || spied || gameEnded,
     [s.revealed]: revealed,
-    [s.spied]: spied,
+    [s.spied]: spied || gameEnded,
     [s.animation]: revealed,
   })
 
