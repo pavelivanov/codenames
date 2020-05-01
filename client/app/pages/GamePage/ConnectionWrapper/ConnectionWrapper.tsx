@@ -86,13 +86,13 @@ const ConnectionWrapper = ({ children }) => {
 
      */
 
-    const playerName = cookie.get('playerName')
+    let playerName = cookie.get('playerName')
     const playerColor = cookie.get('playerColor')
     const currentGameId = cookie.get('currentGameId')
 
     if (gameId !== currentGameId && !/newgame/.test(location.search)) {
       cookie.remove('playerName')
-      cookie.remove('currentGameId')
+      playerName = null
     }
 
     if (!playerName) {
@@ -144,7 +144,6 @@ const ConnectionWrapper = ({ children }) => {
     socket.on('game not found', handleGameNotFound)
 
     return () => {
-      cookie.remove('currentGameId')
       socket.emit('leave game', gameId)
       socket.off('game joined', handleGameJoin)
       socket.off('game not found', handleGameNotFound)

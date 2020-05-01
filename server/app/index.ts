@@ -357,7 +357,7 @@ io.on('connection', (socket: any) => {
           if (games[gameId] && games[gameId].players.length === 0) {
             delete games[gameId]
           }
-        }, 5000)
+        }, 2 * 60 * 1000)
       }
     }
 
