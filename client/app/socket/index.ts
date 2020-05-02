@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 
 
-const endpoint = process.env.NODE_ENV === 'production' ? 'http://codenames.wtf/' : 'http://localhost:3007/'
+const endpoint = process.env.NODE_ENV === 'production' ? '//codenames.wtf/' : '//localhost:3007/'
 const socket = io(endpoint)
 
 socket.on('disconnect', () => {

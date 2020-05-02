@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 const request = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'http://codenames.wtf/rest' : 'http://localhost:3007/rest',
+  baseURL: process.env.NODE_ENV === 'production' ? '//codenames.wtf/rest' : '//localhost:3007/rest',
   // withCredentials: true,
   timeout: 15 * 1000,
 })
