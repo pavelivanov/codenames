@@ -1,0 +1,16 @@
+{
+  "restartable": "rs",
+  "verbose": false,
+  "quiet": true,
+  "ext": "*.ts",
+  "watch": [
+    "./bin",
+    "./local_modules",
+    "./site",
+    "package.json"
+  ],
+  "ignore": [],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

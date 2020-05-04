@@ -1,0 +1,26 @@
+$media-mobile-portrait-end  : 562px;
+$media-mobile-end           : 820px;
+$media-except-mobile-start  : $media-mobile-end + 1px;
+
+$media-mobile-portrait-rule : '(max-width: ' + $media-mobile-portrait-end + ')';
+$media-mobile-rule          : '(min-width: ' + ($media-mobile-portrait-end + 1) + ') and (max-width: ' + $media-mobile-end + ')';
+$media-except-mobile-rule   : '(min-width: ' + $media-except-mobile-start + ')';
+
+
+@mixin media-mobile-portrait {
+  @media #{$media-mobile-portrait-rule} {
+    @content;
+  }
+}
+
+@mixin media-mobile {
+  @media #{$media-mobile-rule} {
+    @content;
+  }
+}
+
+@mixin media-except-mobile {
+  @media #{$media-except-mobile-rule} {
+    @content;
+  }
+}

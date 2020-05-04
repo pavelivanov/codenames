@@ -1,0 +1,83 @@
+$spaces: 'p', 'pt', 'pb', 'pr', 'pl', 'm', 'mt', 'mb', 'mr', 'ml';
+$sizes: '4', '8', '12', '16', '20', '24', '32', '36', '40', '48', '56', '60', '64', '80', '96';
+
+$spacesMap: (
+  'p' : 'padding',
+  'pt': 'padding-top',
+  'pb': 'padding-bottom',
+  'pr': 'padding-right',
+  'pl': 'padding-left',
+  'm' : 'margin',
+  'mt': 'margin-top',
+  'mb': 'margin-bottom',
+  'mr': 'margin-right',
+  'ml': 'margin-left'
+);
+
+$sizesToOffsets: (
+  '96' : 96px,
+  '80' : 80px,
+  '64' : 64px,
+  '60' : 60px,
+  '56' : 56px,
+  '48' : 48px,
+  '40' : 40px,
+  '36' : 36px,
+  '32' : 32px,
+  '24' : 24px,
+  '20' : 20px,
+  '16' : 16px,
+  '12' : 12px,
+  '8'  : 8px,
+  '4'  : 4px,
+);
+
+.alignCenter {
+  text-align: center;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.alignLeft {
+  text-align: left;
+}
+
+.center {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.relative {
+  position: relative;
+}
+
+// generate example – .pt_24 { padding-top: $offset-24 }
+@mixin stylesByMedia($media: null) {
+  @each $space in $spaces {
+    @each $size in $sizes {
+
+      .#{$space}_#{$size} {
+        @if $media == null {
+          #{map-get($spacesMap, $space)}: map-get($sizesToOffsets, $size);
+        }
+        @else if $media == 'vwx' {
+          #{map-get($spacesMap, $space)}: vw(map-get($sizesToOffsets, $size));
+        }
+      }
+    }
+  }
+}
+
+@include media-mobile {
+  @include stylesByMedia('vwx');
+}
+
+@include media-except-mobile {
+  @include stylesByMedia();
+}

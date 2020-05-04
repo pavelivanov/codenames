@@ -1,0 +1,23 @@
+// Get untiless value
+//
+// example: strip-unit(14px) -> 14
+//
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+// Convert to right VW variable for iPhone X
+//
+// font-size: vw(14);
+//
+@function pvw($value) {
+  @return (0.2667vw * strip-unit($value));
+}
+
+@function vw($value) {
+  @return (0.12315vw * strip-unit($value));
+}

@@ -1,0 +1,75 @@
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cardContainer {
+  padding: 6px;
+
+  .size6x6 & {
+    width: calc(100% / 6);
+  }
+
+  .size6x5 & {
+    width: 20%;
+  }
+
+  .size5x5 & {
+    width: 20%;
+  }
+
+  .size5x4 & {
+    width: 20%;
+  }
+}
+
+.buttonContainer {
+  text-align: center;
+}
+
+.startNewGameButton {
+  cursor: pointer;
+  background-color: #000;
+  font-weight: 200;
+  color: #fff;
+  text-transform: uppercase;
+  outline: none;
+}
+
+
+@include media-mobile {
+
+  .cards {
+    margin: 0 vw(20);
+  }
+
+  .cardContainer {
+    padding: vw(6);
+  }
+
+  .startNewGameButton {
+    height: vw(40);
+    padding: 0 vw(20);
+    margin-top: vw(30);
+    font-size: vw(20);
+  }
+}
+
+@include media-except-mobile {
+
+  .cards {
+    max-width: 880px;
+    margin: 0 20px;
+  }
+
+  .cardContainer {
+    padding: 6px;
+  }
+
+  .startNewGameButton {
+    height: 40px;
+    padding: 0 20px;
+    margin-top: 30px;
+    font-size: 20px;
+  }
+}

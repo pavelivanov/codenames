@@ -1,0 +1,66 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 10vh 0;
+}
+
+.logo {
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 48px;
+}
+
+.intro {
+  padding: 0 20px;
+  margin-top: 20px;
+  max-width: 460px;
+  text-align: center;
+  line-height: 36px;
+  font-weight: 300;
+  font-size: 22px;
+}
+
+.settings {
+  margin: 100px 0 60px;
+}
+
+.button {
+  flex: none;
+  height: 50px;
+  cursor: pointer;
+  padding: 0 30px;
+  background-color: #000;
+  font-weight: 200;
+  font-size: 24px;
+  color: #fff;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.rules {
+  position: relative;
+  margin-top: 40px;
+  font-weight: 300;
+  font-size: 24px;
+  color: #0089ff;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #0089ff;
+    transition: opacity 0.23s ease;
+  }
+
+  &:hover {
+
+    &::after {
+      opacity: 0.3;
+    }
+  }
+}

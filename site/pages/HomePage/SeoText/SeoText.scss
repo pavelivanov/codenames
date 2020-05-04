@@ -1,0 +1,65 @@
+.title {
+  font-weight: 400;
+}
+
+.text {
+  color: #555;
+}
+
+
+@include media-mobile-portrait {
+
+  .content {
+    padding: pvw(40) pvw(20) pvw(100);
+  }
+
+  .title {
+    margin-top: pvw(32);
+    margin-bottom: pvw(12);
+    font-size: pvw(24);
+  }
+
+  .text {
+    line-height: pvw(24);
+  }
+
+  .text {
+    line-height: pvw(24) !important;
+  }
+}
+
+@include media-mobile {
+
+  .content {
+    padding: vw(40) vw(20) vw(100);
+  }
+
+  .title {
+    margin-top: vw(32);
+    margin-bottom: vw(12);
+    font-size: vw(24);
+  }
+
+  .text {
+    line-height: vw(24);
+  }
+}
+
+@include media-except-mobile {
+
+  .content {
+    max-width: 900px;
+    padding: 40px 20px 100px;
+    margin: 0 auto;
+  }
+
+  .title {
+    margin-top: 32px;
+    margin-bottom: 12px;
+    font-size: 24px;
+  }
+
+  .text {
+    line-height: 24px;
+  }
+}
