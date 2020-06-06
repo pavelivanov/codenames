@@ -232,18 +232,28 @@ io.on('connection', (socket: any) => {
   })
 
   socket.on('change player color', (color: TeamColor) => {
-    socket.state.color = color
-    socket.state.player.color = color
+    try {
+      socket.state.color = color
+      socket.state.player.color = color
 
-    socket.emit('color changed', color)
-    socket.emitGame('player changed color', { name: socket.state.player.name, color })
+      socket.emit('color changed', color)
+      socket.emitGame('player changed color', { name: socket.state.player.name, color })
+    }
+    catch (err) {
+      console.error(err)
+    }
   })
 
   socket.on('change player mode', (mode: PlayerMode) => {
-    socket.state.player.mode = mode
+    try {
+      socket.state.player.mode = mode
 
-    socket.emit('mode changed', mode)
-    socket.emitGame('player changed mode', { name: socket.state.player.name, mode })
+      socket.emit('mode changed', mode)
+      socket.emitGame('player changed mode', { name: socket.state.player.name, mode })
+    }
+    catch (err) {
+      console.error(err)
+    }
   })
 
   socket.on('reveal card', (cardName: string) => {
