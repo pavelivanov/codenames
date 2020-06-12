@@ -79,6 +79,10 @@
 
   &.revealed {
     cursor: default;
+
+    .title {
+      color: #fff !important;
+    }
   }
 
   &.spied {
@@ -214,7 +218,7 @@
   }
 
   @include dark-theme {
-    background-color: #333138;
+    background-color: #1f1d25;
   }
 }
 
@@ -244,7 +248,7 @@
   }
 
   @include dark-theme {
-    color: #fff;
+    color: #d4cfdc;
     font-size: 16px;
   }
 }
