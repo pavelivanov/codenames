@@ -54,8 +54,8 @@
       box-shadow: #b2b2b2 0 0 0 1px;
 
       @include dark-theme {
-        background-color: #19181E;
-        box-shadow: #34323e 0 0 0 1px;
+        background-color: #34323e;
+        box-shadow: none;
       }
     }
   }
