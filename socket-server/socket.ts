@@ -195,12 +195,13 @@ io.on('connection', (socket: any) => {
 
   socket.on('join game', ({ gameId, name, color }: { gameId: string, name: string, color: TeamColor }) => {
     const game = games[gameId]
+    const playerColor = socket.state.color || color || 'red'
 
     if (game) {
       const player: Player = socket.state.player || {
         name,
         admin: name === game.creator,
-        color: socket.state.color || 'red',
+        color: playerColor,
         mode: 'player',
       }
 
@@ -210,7 +211,7 @@ io.on('connection', (socket: any) => {
       socket.state.game = game
       socket.state.player = player
       socket.state.name = name
-      socket.state.color = color
+      socket.state.color = playerColor
       socket.emitGame = (event: string, message?: any) => socket.to(gameId).emit(event, message)
 
       socket.join(gameId)

@@ -16,6 +16,10 @@
     .background {
       background-color: #ff908a;
       color: #ab3831;
+
+      @include dark-theme {
+        background-color: #8e1c3c;
+      }
     }
   }
 
@@ -28,6 +32,10 @@
     .background {
       background-color: #7ab2fd;
       color: #2c558c;
+
+      @include dark-theme {
+        background-color: #264383;
+      }
     }
   }
 
@@ -35,12 +43,20 @@
 
     &::before {
       background-color: #aaa;
+
+      @include dark-theme {
+        background-color: #19181E;
+      }
     }
 
     .background {
       background-color: #fff;
-      border-color: #b2b2b2;
-      color: #6b6b6b;
+      box-shadow: #b2b2b2 0 0 0 1px;
+
+      @include dark-theme {
+        background-color: #19181E;
+        box-shadow: #34323e 0 0 0 1px;
+      }
     }
   }
 
@@ -53,6 +69,11 @@
     .background {
       background-color: #333;
       color: #fff;
+
+      @include dark-theme {
+        background-color: #000;
+        box-shadow: #474555 0 0 0 1px;
+      }
     }
   }
 
@@ -64,7 +85,7 @@
     cursor: default;
 
     &.revealed {
-      
+
       .background {
         opacity: 0.3;
       }
@@ -74,7 +95,7 @@
       }
 
       &.red {
-    
+
         .background {
           background: repeating-linear-gradient(
             30deg,
@@ -82,25 +103,45 @@
             #ff908a 10px,
             #ff7770 10px,
             #ff7770 20px
-          )
+          );
+
+          @include dark-theme {
+            background: repeating-linear-gradient(
+              30deg,
+              #19181E,
+              #19181E 10px,
+              #8e1c3c 10px,
+              #8e1c3c 20px
+            );
+          }
         }
       }
-    
+
       &.blue {
-    
+
         .background {
           background: repeating-linear-gradient(
             30deg,
-            #7ab2fd,
-            #7ab2fd 10px,
+            #19181E,
+            #19181E 10px,
             #599af0 10px,
             #599af0 20px
-          )
+          );
+
+          @include dark-theme {
+            background: repeating-linear-gradient(
+              30deg,
+              #19181E,
+              #19181E 10px,
+              #264383 10px,
+              #264383 20px
+            );
+          }
         }
       }
-    
+
       &.neutral {
-    
+
         .background {
           background: repeating-linear-gradient(
             30deg,
@@ -108,7 +149,17 @@
             #fff 10px,
             #ddd 10px,
             #ddd 20px
-          )
+          );
+
+          @include dark-theme {
+            background: repeating-linear-gradient(
+              30deg,
+              #19181E,
+              #19181E 10px,
+              #34323e 10px,
+              #34323e 20px
+            );
+          }
         }
       }
     }
@@ -153,7 +204,6 @@
   width: 100%;
   height: 100%;
   background-color: #e5e8ec;
-  border: 1px solid transparent;
   color: #38485f;
   border-radius: 4px;
   transition: background 0.6s ease, border-color 0.6s ease;
@@ -161,6 +211,10 @@
 
   &:hover {
     background-color: #d7dbe0;
+  }
+
+  @include dark-theme {
+    background-color: #333138;
   }
 }
 
@@ -187,5 +241,10 @@
 
   .black & {
     color: #fff;
+  }
+
+  @include dark-theme {
+    color: #fff;
+    font-size: 16px;
   }
 }

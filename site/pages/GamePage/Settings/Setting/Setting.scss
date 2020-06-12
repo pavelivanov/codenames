@@ -1,5 +1,9 @@
 .setting {
   color: #717b88;
+
+  @include dark-theme {
+
+  }
 }
 
 .value {
@@ -7,6 +11,10 @@
   cursor: pointer;
   user-select: none;
   color: #000;
+
+  @include dark-theme {
+    color: $dt-white-color;
+  }
 
   &::after {
     content: '';
@@ -31,6 +39,10 @@
 
     &::after {
       background-color: #000;
+
+      @include dark-theme {
+        background-color: $dt-white-color;
+      }
     }
   }
 }

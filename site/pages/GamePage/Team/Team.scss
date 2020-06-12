@@ -5,6 +5,10 @@
 
     .title {
       color: $red-team-color;
+
+      @include dark-theme {
+        color: #a0183e;
+      }
     }
   }
 
@@ -12,6 +16,10 @@
 
     .title {
       color: $blue-team-color;
+
+      @include dark-theme {
+        color: #2e5dc3;
+      }
     }
   }
 }

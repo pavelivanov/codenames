@@ -8,13 +8,23 @@ import { Row, Box, Text } from 'components'
 import s from './Setting.scss'
 
 
-const Setting = ({ label, values, initialValue, name }) => {
+const Setting = ({ label, values, initialValue, name, cookieName, onClick }) => {
   const [ selectedValue, setValue ] = useState(initialValue)
 
   const handleClick = useCallback((value) => {
     setValue(value)
-    cookie.set(name, value)
-    socket.emit(`change player ${name}`, value)
+
+    if (cookieName) {
+      cookie.set(cookieName, value)
+    }
+
+    if (name) {
+      socket.emit(`change player ${name}`, value)
+    }
+
+    if (typeof onClick === 'function') {
+      onClick(value)
+    }
   }, [])
 
   return (

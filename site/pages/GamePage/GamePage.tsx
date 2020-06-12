@@ -43,7 +43,7 @@ const GamePage = () => (
         <h1 className={s.logo}>
           <a href="//codenames.wtf">CODENAMES</a>
         </h1>
-        <GameLink />
+        {/*<GameLink />*/}
       </div>
       <div className={s.content}>
         <Row align="start">

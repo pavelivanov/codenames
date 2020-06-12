@@ -17,6 +17,10 @@
 
   a:any-link {
     color: #000;
+
+    @include dark-theme {
+      color: $dt-white-color;
+    }
   }
 }
 
@@ -73,5 +77,9 @@
     &::after {
       opacity: 0.6;
     }
+  }
+
+  @include dark-theme {
+    color: #ff5900;
   }
 }

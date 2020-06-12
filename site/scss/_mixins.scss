@@ -7,3 +7,9 @@
     content: '';
   }
 }
+
+@mixin dark-theme {
+  :global(.dark-theme) & {
+    @content;
+  }
+}

@@ -1,26 +1,12 @@
 import React, { useRef, useMemo, useEffect } from 'react'
 import { useGameState } from 'game'
+import cookie from 'js-cookie'
 import cx from 'classnames'
 
 import s from './Settings.scss'
 
 import Setting from './Setting/Setting'
 
-
-type SettingItems = [
-  {
-    label: string
-    values: string[]
-    initialValue: TeamColor
-    name: string
-  },
-  {
-    label: string
-    values: string[]
-    initialValue: PlayerMode
-    name: string
-  }
-]
 
 type SettingsProps = {
   color: TeamColor
@@ -38,18 +24,33 @@ const SettingsWrapper = () => {
 const Settings: React.FunctionComponent<SettingsProps> = React.memo(({ color, mode }) => {
   const ref = useRef<HTMLDivElement>()
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     ref.current.classList.remove(s.alwaysVisible)
-  //   }, 5 * 1000)
-  // }, [])
+  useEffect(() => {
+    if (cookie.get('themeColor') === 'dark') {
+      document.body.classList.add('dark-theme')
+    }
+  }, [])
 
-  const settings = useMemo<SettingItems>(() => [
+  const settings = useMemo<any[]>(() => [
+    {
+      label: 'theme',
+      values: [ 'light', 'dark' ],
+      initialValue: cookie.get('themeColor') || 'light',
+      cookieName: 'themeColor',
+      onClick: (value) => {
+        if (value === 'dark') {
+          document.body.classList.add('dark-theme')
+        }
+        else {
+          document.body.classList.remove('dark-theme')
+        }
+      }
+    },
     {
       label: 'my team color',
       values: [ 'red', 'blue' ],
       initialValue: color,
       name: 'color',
+      cookieName: 'playerColor',
     },
     {
       label: 'I am a',
