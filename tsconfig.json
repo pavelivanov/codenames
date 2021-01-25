@@ -4,48 +4,36 @@
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "node",
+    "sourceMap": true,
     "allowJs": true,
     "noEmit": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "jsx": "react",
+    "skipLibCheck": true,
+    "jsx": "preserve",
     "lib": [
       "dom",
-      "es2017"
+      "esnext"
     ],
     "paths": {
-      "helpers": [ "site/helpers/index.js" ],
-      "helpers/*": [ "site/helpers/*" ],
-      "decorators/*": [ "site/decorators/*" ],
-      "containers/*": [ "site/containers/*" ],
-      "components/*": [ "site/components/*" ],
-      "components": [ "site/components/index.js" ],
-      "pages/*": [ "site/pages/*" ],
+      "containers/*": [ "src/containers/*" ],
+      "pages/*": [ "src/pages/*" ],
 
-      "socket": [ "site/socket/index.ts" ],
-      "game": [ "site/game/index.ts" ],
-      "routes": [ "site/routes.tsx" ],
-
-      "base-path": [ "local_modules/base-path/index.js" ],
-      "debounce": [ "local_modules/debounce/index.js" ],
-      "hooks": [ "local_modules/hooks/index.js" ],
-      "hooks/*": [ "local_modules/hooks/*" ],
-
-      "server/*": [ "server/*" ],
-      "build/*": [ "build/*" ]
+      "intl": [ "local_modules/intl" ],
+      "device": [ "local_modules/device" ],
+      "router": [ "local_modules/router" ],
+      "logger": [ "local_modules/logger" ],
+      "cookie-storage": [ "local_modules/cookie-storage" ],
+      "request-context": [ "local_modules/request-context" ],
+      "router/server": [ "local_modules/router/server" ]
     }
   },
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ],
   "include": [
-    "site/**/*",
+    "src/**/*",
+    "client/**/*",
     "server/**/*",
-    "local_modules/**/*",
-    "@types/**/*.d.ts",
-    "typings/global.d.ts"
+    "local_modules/**/*"
   ]
 }

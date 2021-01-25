@@ -1,0 +1,19 @@
+$path: '~fonts/tt-norms-pro-';
+
+@font-face {
+  font-family: 'TT Norms Pro';
+  src: url($path + 'medium.woff2') format('woff2'),
+  url($path + 'medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Norms Pro';
+  src: url($path + 'bold.woff2') format('woff2'),
+  url($path + 'bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

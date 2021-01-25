@@ -1,8 +1,23 @@
-require('@babel/register')({
-  presets: [
-    '@babel/preset-env',
-    '@babel/preset-typescript',
-  ],
-  ignore: [ /node_modules/ ],
-  extensions: [ '.ts', '.tsx', '.js' ],
+const path = require('path')
+const modPath = require('app-module-path')
+
+
+const modules = [
+  '',
+  'local_modules',
+  'site',
+]
+
+modules.forEach((modulePath) => {
+  modPath.addPath(path.join(process.cwd(), modulePath))
 })
+
+require('@babel/register')({
+  ignore: [
+    path.resolve('build'),
+    /node_modules/,
+  ],
+  extensions: [ '.js', '.ts', '.tsx' ],
+})
+
+require('dotenv').config()

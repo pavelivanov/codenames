@@ -1,8 +1,29 @@
 .DS_Store
 .idea
+.vscode
+.tmp
+.coverage
+.scannerwork
+.env
+.eslintcache
+test-report.xml
 
-node_modules
-build
+/node_modules/
+/build/
+/build-cosmos/
 
-*.iml
-*.log
+
+# Tests
+
+__snapshots__/
+screenshots
+
+
+# GraphQL
+
+*GQL.d.ts
+*.graphql.ts
+*.schema.graphql
+schema.graphql
+src/typings/graphql.ts
+src/typings/legacy.graphql.ts

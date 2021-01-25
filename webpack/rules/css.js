@@ -1,21 +1,19 @@
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 
-const loaders = []
+export default ({ isClient }) => {
+  const loaders = []
 
-if (process.env.WEBPACK === 'build.client') {
-  loaders.push(MiniCssExtractPlugin.loader)
+  if (isClient) {
+    loaders.push(MiniCssExtractPlugin.loader)
+  }
+
+  loaders.push('css-loader')
+
+  return [
+    {
+      test: /\.css$/,
+      use: loaders,
+    },
+  ]
 }
-
-loaders.push(
-  'style-loader',
-  'css-loader',
-)
-
-
-export default [
-  {
-    test: /\.css$/,
-    use: loaders,
-  },
-]
