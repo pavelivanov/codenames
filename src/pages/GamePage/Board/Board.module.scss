@@ -1,0 +1,36 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  column-gap: 12px;
+  row-gap: 12px;
+  cursor: pointer;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:hover {
+
+    .cell.active {
+      background-color: #fff;
+    }
+  }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 164px;
+  height: 90px;
+  background-color: rgba(#343434, 0.6);
+  border-radius: 5px;
+  transition: background-color 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.cellTitle {
+  padding: 20px;
+  font-size: 20px;
+  color: #fff;
+}

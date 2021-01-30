@@ -1,39 +1,35 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "module": "esnext",
-    "target": "esnext",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "allowJs": true,
-    "noEmit": true,
-    "noImplicitAny": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "jsx": "preserve",
+    "baseUrl": ".",
+    "target": "es5",
     "lib": [
       "dom",
+      "dom.iterable",
       "esnext"
     ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
     "paths": {
-      "containers/*": [ "src/containers/*" ],
-      "pages/*": [ "src/pages/*" ],
-
-      "intl": [ "local_modules/intl" ],
-      "device": [ "local_modules/device" ],
-      "router": [ "local_modules/router" ],
-      "logger": [ "local_modules/logger" ],
-      "cookie-storage": [ "local_modules/cookie-storage" ],
-      "request-context": [ "local_modules/request-context" ],
-      "router/server": [ "local_modules/router/server" ]
+      "@/helpers": [ "src/helpers" ],
+      "@/helpers/*": [ "src/helpers/*" ],
+      "@/shared/*": [ "shared/*" ]
     }
   },
   "include": [
-    "src/**/*",
-    "client/**/*",
-    "server/**/*",
-    "local_modules/**/*"
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

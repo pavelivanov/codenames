@@ -1,0 +1,38 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100%;
+  color: #fff;
+}
+
+.chat {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  width: 480px;
+  height: 100px;
+  background-color: rgba(#43425c, 0.7);
+  border-radius: 5px;
+}
+
+.messages {
+  flex: auto 1 1;
+}
+
+.newMessage {
+  height: 100%;
+  width: 64px;
+  color: #fff;
+  background-color: #292642;
+  cursor: pointer;
+  border-radius: 5px;
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+}

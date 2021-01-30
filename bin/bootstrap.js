@@ -1,23 +1,8 @@
-const path = require('path')
-const modPath = require('app-module-path')
-
-
-const modules = [
-  '',
-  'local_modules',
-  'site',
-]
-
-modules.forEach((modulePath) => {
-  modPath.addPath(path.join(process.cwd(), modulePath))
-})
-
 require('@babel/register')({
-  ignore: [
-    path.resolve('build'),
-    /node_modules/,
+  presets: [
+    '@babel/preset-env',
+    '@babel/preset-typescript',
   ],
-  extensions: [ '.js', '.ts', '.tsx' ],
+  ignore: [ /node_modules/ ],
+  extensions: [ '.ts', '.tsx', '.js' ],
 })
-
-require('dotenv').config()
