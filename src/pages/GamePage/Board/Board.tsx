@@ -9,19 +9,17 @@ const Card = ({ data, onClick }) => {
   const { word, color, revealed } = data
 
   return (
-    <div className={s.cell} style={{ backgroundColor: revealed ? color : null }} onClick={onClick}>
+    <div className={s.cell} style={{ backgroundColor: color }} onClick={onClick}>
       <span className={s.cellTitle}>{word}</span>
     </div>
   )
 }
 
 const Board = () => {
-  const { cols, rows, cards } = useContext(GameContext)
+  const { cols, rows, cards, colors } = useContext(GameContext)
   const { player, revealedCards } = useContext(GameStateContext)
 
   const handleCardClick = useCallback(({ word, revealed }) => {
-    console.log(555, player, revealed)
-
     if (!player || player.spymaster || revealed) {
       return
     }
@@ -34,9 +32,9 @@ const Board = () => {
     gridTemplateRows: `repeat(${rows}, 1fr)`,
   }
 
-  const modifiedCards = cards.map((word) => ({
+  const modifiedCards = cards.map((word, index) => ({
     word,
-    color: revealedCards[word],
+    color: player?.spymaster ? colors[index] : revealedCards[word],
     revealed: Boolean(revealedCards[word]),
   }))
 

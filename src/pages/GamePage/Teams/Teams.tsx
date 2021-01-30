@@ -45,9 +45,24 @@ const Team = ({ color, players, player }) => {
   )
 }
 
-type Teams = {
-  red: Player[]
-  blue: Player[]
+const Spymaster = ({ player }) => {
+  const handleChange = useCallback(() => {
+    socket.emit('change player', {
+      playerId: player.id,
+      values: { spymaster: !player.spymaster },
+    })
+  }, [ player ])
+
+  return (
+    <div>
+      <input
+        type="checkbox"
+        checked={player.spymaster}
+        onChange={handleChange}
+      />
+      spymaster
+    </div>
+  )
 }
 
 const Teams = () => {
@@ -61,6 +76,11 @@ const Teams = () => {
       <Team color="red" players={redTeam} player={player} />
       <hr />
       <Team color="blue" players={blueTeam} player={player} />
+      {
+        player && (
+          <Spymaster player={player} />
+        )
+      }
     </div>
   )
 }

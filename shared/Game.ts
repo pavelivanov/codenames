@@ -33,6 +33,18 @@ class Game {
     this.state.players.push(player)
   }
 
+  changePlayer(playerId, values: Partial<CodeNames.Player>) {
+    const player = this.state.players.find((player) => player.id === playerId)
+    const index = this.state.players.indexOf(player)
+
+    this.state.players[index] = {
+      ...player,
+      ...values,
+    }
+
+    return this.state.players[index]
+  }
+
   removePlayer(playerId: string) {
     this.state.players = this.state.players.filter((player) => player.id !== playerId)
   }

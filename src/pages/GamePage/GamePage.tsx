@@ -11,9 +11,6 @@ const GamePage = () => {
   const game = useContext(GameContext)
   const state = useContext(GameStateContext)
 
-  console.log('--- game', game)
-  console.log('--- state', state)
-
   if (!game || !state) {
     return null
   }

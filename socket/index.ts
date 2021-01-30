@@ -96,6 +96,8 @@ io.on('connection', (socket: any) => {
     socket.gameId = gameId
 
     if (player) {
+      console.log(333, player)
+
       socket.player = player
       game.addPlayer(socket.player)
     }
@@ -125,18 +127,6 @@ io.on('connection', (socket: any) => {
     emitPlayers('team joined', { player })
   })
 
-  socket.on('leave team', () => {
-    const playerId = socket.player.id
-    const game = games.get(socket.gameId)
-
-    game.removePlayer(playerId)
-
-    emitMyself('team left', { playerId, myself: true })
-    emitPlayers('team left', { playerId })
-
-    socket.player = null
-  })
-
   socket.on('reveal card', ({ word }) => {
     if (!socket.player || socket.player.spymaster) {
       return
@@ -153,6 +143,34 @@ io.on('connection', (socket: any) => {
 
     emitMyself('card revealed', { word, color })
     emitPlayers('card revealed', { word, color })
+  })
+
+  socket.on('change player', ({ playerId, values }: { playerId: CodeNames.Player['id'], values: Partial<CodeNames.Player> }) => {
+    const game = games.get(socket.gameId)
+    const newPlayer = game.changePlayer(playerId, values)
+
+    if (socket.player?.id === playerId) {
+      socket.player = newPlayer
+    }
+
+    if (socket.player.spymaster) {
+      emitMyself('all cards revealed', { colors: game.colors })
+    }
+
+    emitMyself('player changed', { player: newPlayer })
+    emitPlayers('player changed', { player: newPlayer })
+  })
+
+  socket.on('leave team', () => {
+    const playerId = socket.player.id
+    const game = games.get(socket.gameId)
+
+    game.removePlayer(playerId)
+
+    emitMyself('team left', { playerId, myself: true })
+    emitPlayers('team left', { playerId })
+
+    socket.player = null
   })
 
   const handleDisconnectGame = () => {
