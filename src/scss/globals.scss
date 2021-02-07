@@ -11,8 +11,8 @@ body {
   font-weight: 400;
   font-family: 'Poppins', sans-serif;
   text-rendering: optimizeLegibility;
-  // background-image: url('./images/bg-stars.svg'), linear-gradient(180deg, #1e1456, #3d358a);
-  background-image: url('/bg-stars.svg'), linear-gradient(180deg, #151515, #292642);
+  background-color: #fff; // #1C1C1C
+  // background-image: url('/static/bg-stars.svg'), linear-gradient(180deg, #151515, #292642);
   background-size: cover;
   background-position: center;
   -webkit-font-smoothing: antialiased;

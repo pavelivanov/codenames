@@ -18,15 +18,36 @@ declare module '*.scss' {
   export = scssClassNames
 }
 
-declare namespace CodeNames {
+type Color = 'red' | 'blue' | 'neutral' | 'black'
 
-  type Color = 'red' | 'blue' | 'neutral' | 'black'
+type Player = {
+  id: string
+  name: string
+  color: string
+  spymaster: boolean
+}
 
-  type Player = {
-    id: string
-    name: string
-    color: string
-    spymaster: boolean
+type GameBase = {
+  id: string
+  lang: string
+  cols: number
+  rows: number
+  cards: string[]
+}
+
+type ServerGame = GameBase & {
+  colors?: number[]
+  state: {
+    players: Player[]
+    revealedCards: Record<string, Color>
   }
 }
 
+type ClientGame = GameBase & {
+  colors?: Color[]
+  state: {
+    player: Player
+    players: Player[]
+    revealedCards: Record<string, Color>
+  }
+}

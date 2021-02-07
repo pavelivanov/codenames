@@ -46,22 +46,14 @@ const Team = ({ color, players, player }) => {
 }
 
 const Spymaster = ({ player }) => {
-  const handleChange = useCallback(() => {
-    socket.emit('change player', {
-      playerId: player.id,
-      values: { spymaster: !player.spymaster },
-    })
+  const handleClick = useCallback(() => {
+    socket.emit('become spymaster')
   }, [ player ])
 
   return (
-    <div>
-      <input
-        type="checkbox"
-        checked={player.spymaster}
-        onChange={handleChange}
-      />
-      spymaster
-    </div>
+    <button onClick={handleClick}>
+      become a spymaster
+    </button>
   )
 }
 
@@ -70,6 +62,7 @@ const Teams = () => {
 
   const redTeam = players.filter(({ color }) => color === 'red')
   const blueTeam = players.filter(({ color }) => color === 'blue')
+  const isSpymasterVisible = player && players.filter((p) => p.color === player.color && p.spymaster).length === 0
 
   return (
     <div>
@@ -77,7 +70,7 @@ const Teams = () => {
       <hr />
       <Team color="blue" players={blueTeam} player={player} />
       {
-        player && (
+        isSpymasterVisible && (
           <Spymaster player={player} />
         )
       }

@@ -1,6 +1,22 @@
 import words from './words'
 
 
+const hashesMap = {
+  red: [ 1, 5, 8, 13, 27, 33, 41, 56, 72 ],
+  blue: [ 3, 7, 11, 29, 31, 37, 55, 67, 81 ],
+  neutral: [ 2, 4, 9, 14, 28, 44, 59, 77, 80 ],
+  black: [ 6, 10, 15, 22, 34, 36, 46 ],
+}
+
+const hashColors = (colors: Color[]): number[] => (
+  colors.map((color) => {
+    const maxIndex = hashesMap[color].length - 1
+    const index = Math.floor(Math.random() * maxIndex)
+
+    return hashesMap[color][index]
+  })
+)
+
 const shuffle = (arr): any[] => {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -49,12 +65,12 @@ const createBoard = (opts: Opts) => {
   const redCount: number = Math.round(Math.random()) ? count1 : count2
   const blueCount: number = count1 + count2 - redCount
 
-  const colors: CodeNames.Color[] = shuffle([
+  const colors: number[] = hashColors(shuffle([
     ...new Array(redCount).fill('red'),
     ...new Array(blueCount).fill('blue'),
     ...new Array(neutralCount).fill('neutral'),
     ...new Array(blackCount).fill('black'),
-  ])
+  ]))
 
   const cards = getRandomizedArr(words[lang.toLowerCase()], cellCount)
 

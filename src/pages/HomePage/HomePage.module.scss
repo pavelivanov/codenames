@@ -1,84 +1,214 @@
+.root {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  --bg-color: #fff;
+  --brand-color: #4e35ff;
+  --text-color: #1C2460;
+  --card-color: #f5f5f5;
+  --card-hover-color: #e3ecff;
+}
+
 .page {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-color);
+}
+
+.title {
+  padding-left: 24px;
+  font-weight: 600;
+  font-size: 6.5vh;
+  letter-spacing: 1.5px;
+  line-height: 1.3;
+  color: var(--text-color);
+
+  span {
+    display: inline-block;
+    background-color: var(--brand-color);
+    margin: 4px 0 2px -24px;
+    padding: 4px 20px;
+    font-weight: 700;
+    color: var(--bg-color);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  min-height: 100%;
+  flex: 1 1 0;
+  min-width: 1px;
+  max-width: 70%;
 }
 
-.headline {
-  position: absolute;
-  top: 24px;
-  left: 24px;
+.sizes {
+  margin-top: 10vh;
 }
 
-.logo {
-  font-weight: 700;
-  font-size: 40px;
-  color: #fff;
-}
-
-.subLogo {
-  font-weight: 300;
-  font-size: 20px;
-  color: #5f55ff;
-}
-
-.themeButton {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 40px;
-  height: 40px;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.title {
-  margin-top: -40px;
-  margin-bottom: 40px;
+.size {
+  position: relative;
   font-weight: 500;
-  font-size: 32px;
-  color: #fff;
-}
-
-.boards {
-  display: flex;
-}
-
-.board {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  column-gap: 4px;
-  row-gap: 4px;
-  margin-left: 48px;
+  font-size: 7.5vh;
+  color: var(--text-color);
+  overflow: hidden;
   cursor: pointer;
 
+  span {
+    font-size: 6.5vh;
+  }
+
   &:first-child {
-    margin-left: 0;
+    margin-top: -5.5vh;
   }
 
   &:hover {
-
-    .cell.active {
-      background-color: #5f55ff;
-    }
+    color: var(--brand-color);
   }
 }
 
-.cell {
-  width: 30px;
-  height: 20px;
-  background-color: rgba(66,66, 105, 0.6);
-  border-radius: 2px;
-  transition: background-color 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+.lang {
+  margin-top: 2vh;
+  font-size: 6vh;
+  color: var(--text-color);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--brand-color);
+  }
 
   &.active {
-    background-color: #746cbc;
+    background-color: var(--brand-color);
+    padding: 0 16px;
+    color: var(--bg-color);
+  }
+}
+
+.board {
+  position: absolute;
+  top: 1vw;
+  right: 1vw;
+  bottom: 1vw;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  column-gap: 1vw;
+  row-gap: 1vw;
+  width: 70%;
+}
+
+.cell {
+  width: 100%;
+  height: 100%;
+  background-color: var(--card-color);
+  transition: background-color 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  border-radius: 10%;
+
+  &.active {
+    background-color: var(--card-hover-color);
+  }
+}
+
+
+.themeButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  background-color: #28272f;
+  cursor: pointer;
+  border-radius: 50%;
+
+  &.active {
+    background-color: #fff;
+  }
+}
+
+.darkContainer {
+  --bg-color: #28272f;
+  --brand-color: #17ffdf;
+  --text-color: #fff;
+  --card-color: #2c2c32;
+  --card-hover-color: #1e443f;
+
+  position: absolute;
+  z-index: 40;
+  overflow: hidden;
+  animation: backward2 0.4s;
+  animation-fill-mode: forwards;
+
+  &.noAnimate {
+    animation: none;
+  }
+
+  &.active {
+    animation: forward2 0.7s;
+    animation-fill-mode: forwards;
+  }
+}
+
+
+@keyframes forward2 {
+  0% {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  20% {
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 50%;
+  }
+  80% {
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 50%;
+  }
+  100% {
+    top: 0;
+    right: 0;
+    width: 130vw;
+    height: 130vh;
+    border-radius: 0;
+  }
+}
+
+@keyframes backward2 {
+  0% {
+    top: 0;
+    right: 0;
+    width: 130vw;
+    height: 130vh;
+    border-radius: 0;
+  }
+  80% {
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 50%;
+  }
+  100% {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
   }
 }

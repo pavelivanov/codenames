@@ -21,7 +21,6 @@
     "paths": {
       "@/helpers": [ "src/helpers" ],
       "@/helpers/*": [ "src/helpers/*" ],
-      "@/shared/*": [ "shared/*" ]
     }
   },
   "include": [

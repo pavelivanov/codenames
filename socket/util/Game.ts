@@ -9,10 +9,10 @@ class Game {
   cols: number
   rows: number
   cards: string[]
-  colors?: CodeNames.Color[] // for spymaster only
+  colors: number[]
   state: {
-    players: CodeNames.Player[]
-    revealedCards: Record<string, CodeNames.Color>
+    players: Player[]
+    revealedCards: number[]
   }
 
   constructor(props: GameOpts) {
@@ -25,15 +25,27 @@ class Game {
 
     this.state = props.state || {
       players: [],
-      revealedCards: {},
+      revealedCards: [], // indexes
     }
   }
 
-  addPlayer(player: CodeNames.Player) {
+  addPlayer(player: Player) {
     this.state.players.push(player)
   }
 
-  changePlayer(playerId, values: Partial<CodeNames.Player>) {
+  changePlayerColor(playerId) {
+    const player = this.state.players.find((player) => player.id === playerId)
+    const index = this.state.players.indexOf(player)
+
+    this.state.players[index] = {
+      ...player,
+      color: player.color === 'red' ? 'blue' : 'red',
+    }
+
+    return this.state.players[index]
+  }
+
+  changePlayer(playerId, values: Partial<Player>) {
     const player = this.state.players.find((player) => player.id === playerId)
     const index = this.state.players.indexOf(player)
 
@@ -50,15 +62,11 @@ class Game {
   }
 
   isCardRevealed(word): boolean {
-    return Boolean(this.state.revealedCards[word])
+    return Boolean(this.state.revealedCards[this.cards.indexOf(word)])
   }
 
-  revealCard(word): CodeNames.Color {
-    const color = this.colors[this.cards.indexOf(word)]
-
-    this.state.revealedCards[word] = color
-
-    return color
+  revealCard(word): void {
+    this.state.revealedCards.push(this.cards.indexOf(word))
   }
 }
 

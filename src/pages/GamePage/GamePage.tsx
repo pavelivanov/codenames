@@ -7,7 +7,7 @@ import Teams from './Teams/Teams'
 import s from './GamePage.module.scss'
 
 
-const GamePage = () => {
+const Content = () => {
   const game = useContext(GameContext)
   const state = useContext(GameStateContext)
 
@@ -29,11 +29,22 @@ const GamePage = () => {
   )
 }
 
-
-export default () => (
+const GamePage = () => (
   <GameProvider>
     <GameStateProvider>
-      <GamePage />
+      <Content />
     </GameStateProvider>
   </GameProvider>
 )
+
+
+export default GamePage
+
+export async function getServerSideProps(context) {
+  context.res.statusCode = 404
+
+  return {
+    props: {},
+    notFound: true,
+  }
+}

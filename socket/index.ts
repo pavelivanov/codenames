@@ -5,8 +5,7 @@ import bodyParser from 'body-parser'
 import { v4 as uuidv4 } from 'uuid'
 import { Server } from 'socket.io'
 
-import Game from '../shared/Game'
-import { createBoard } from './util'
+import { Game, createBoard } from './util'
 import removeKey from '../src/helpers/removeKey'
 
 
@@ -91,19 +90,21 @@ io.on('connection', (socket: any) => {
       return
     }
 
+    console.log(111, player, game.state.players)
+
+    if (game.state.players.find((p) => p.id === player.id)) {
+      console.log(111, game.state.players)
+
+      return
+    }
+
     socket.join(gameId)
 
     socket.gameId = gameId
 
     if (player) {
-      console.log(333, player)
-
       socket.player = player
       game.addPlayer(socket.player)
-    }
-
-    if (!player || !player.spymaster) {
-      game = removeKey(game, 'colors')
     }
 
     emitMyself('game joined', { game })
@@ -114,7 +115,14 @@ io.on('connection', (socket: any) => {
   })
 
   socket.on('join team', ({ name, color }) => {
-    const player: CodeNames.Player = {
+    const game = games.get(socket.gameId)
+
+    if (!game) {
+      emitMyself('game not found', { gameId: socket.gameId })
+      return
+    }
+
+    const player: Player = {
       id: uuidv4(),
       name,
       color,
@@ -122,8 +130,9 @@ io.on('connection', (socket: any) => {
     }
 
     socket.player = player
+    game.addPlayer(player)
 
-    emitMyself('team joined', { player, myself: true })
+    emitMyself('team joined', { player, self: true })
     emitPlayers('team joined', { player })
   })
 
@@ -139,41 +148,63 @@ io.on('connection', (socket: any) => {
       return
     }
 
-    const color = game.revealCard(word)
+    game.revealCard(word)
 
-    emitMyself('card revealed', { word, color })
-    emitPlayers('card revealed', { word, color })
+    emitMyself('card revealed', { word })
+    emitPlayers('card revealed', { word })
   })
 
-  socket.on('change player', ({ playerId, values }: { playerId: CodeNames.Player['id'], values: Partial<CodeNames.Player> }) => {
+  socket.on('become spymaster', () => {
     const game = games.get(socket.gameId)
-    const newPlayer = game.changePlayer(playerId, values)
 
-    if (socket.player?.id === playerId) {
-      socket.player = newPlayer
+    if (!game) {
+      return
     }
 
-    if (socket.player.spymaster) {
-      emitMyself('all cards revealed', { colors: game.colors })
+    const spymaster = game.state.players.find((player) => player.color === socket.player.color && socket.player.spymaster)
+
+    if (!spymaster) {
+      socket.player.spymaster = true
+
+      const player = game.changePlayer(socket.player.id, { spymaster: true })
+
+      emitMyself('player changed', { player, self: true })
+      emitPlayers('player changed', { player })
+    }
+  })
+
+  socket.on('change color', () => {
+    const game = games.get(socket.gameId)
+
+    if (!game) {
+      return
     }
 
-    emitMyself('player changed', { player: newPlayer })
-    emitPlayers('player changed', { player: newPlayer })
+    const player = game.changePlayerColor(socket.player.id)
+
+    emitMyself('player changed', { player, self: true })
+    emitPlayers('player changed', { player })
   })
 
   socket.on('leave team', () => {
-    const playerId = socket.player.id
     const game = games.get(socket.gameId)
+    const playerId = socket.player?.id
+
+    if (!game || !playerId) {
+      return
+    }
 
     game.removePlayer(playerId)
 
-    emitMyself('team left', { playerId, myself: true })
-    emitPlayers('team left', { playerId })
+    emitMyself('player left', { playerId, self: true })
+    emitPlayers('player left', { playerId })
 
     socket.player = null
   })
 
   const handleDisconnectGame = () => {
+    console.log('user disconnected', socket.id)
+
     const game = games.get(socket.gameId)
 
     if (!game) {
@@ -183,6 +214,7 @@ io.on('connection', (socket: any) => {
     const playerId = socket.player?.id
 
     game.removePlayer(playerId)
+
     emitPlayers('player left', { playerId })
 
     socket.gameId = null
@@ -191,103 +223,4 @@ io.on('connection', (socket: any) => {
 
   socket.on('left game', handleDisconnectGame)
   socket.on('disconnect', handleDisconnectGame)
-
-
-
-  /*
-
-  const joinTeam = ({ player }) => {
-    if (!socket.gameId) {
-      return
-    }
-
-    const game = games.get(socket.gameId)
-
-    if (!game) {
-      emitMyself('game not found', { id: socket.gameId })
-      return
-    }
-
-    if (socketPlayer) {
-      leaveTeam()
-    }
-
-    socketPlayer = {
-      gameId: socket.gameId,
-      id: socket.id,
-      name: playerName,
-      color,
-    }
-
-    game.teams[color].push(socketPlayer)
-
-    emitMyself('player joined team', { player: socketPlayer })
-    emitPlayers('player joined team', { player: socketPlayer })
-
-    // todo for chat
-    // emitMyself('team joined', { color, player, teams: game.teams })
-    // emitPlayers('player joined team', { color, player, teams: game.teams })
-  }
-
-  const leaveTeam = () => {
-    const game = games.get(socket.gameId)
-
-    if (!game) {
-      emitMyself('game not found', { id: socket.gameId })
-      return
-    }
-
-    emitMyself('player left team', { player: socketPlayer })
-    emitPlayers('player left team', { player: socketPlayer })
-
-    removePlayerFromTeams({ game })
-  }
-
-  const revealCard = ({ word }) => {
-    if (!socket.gameId || !socketPlayer) {
-      return
-    }
-
-    const game = games.get(socket.gameId)
-
-    if (!game) {
-      emitMyself('game not found', { id: socket.gameId })
-      return
-    }
-
-    const card = game.board.cards.find((card) => card.word === word)
-    const index = game.board.cards.indexOf(card)
-
-    // smbd already opened this card
-    if (card.opened) {
-      emitMyself('card revealed', { word })
-      return
-    }
-
-    game.board.cards[index].opened = true
-
-    emitMyself('card revealed', { word })
-    emitPlayers('card revealed', { word })
-  }
-
-  const disconnect = () => {
-    console.log('user disconnected', socket.id)
-
-    if (socketPlayer) {
-      leaveTeam()
-      socket.leave(socketPlayer.gameId)
-      socketPlayer = null
-    }
-  }
-
-  socket.on('join game', joinGame)
-  socket.on('leave game', leaveGame)
-
-  socket.on('join team', joinTeam)
-  socket.on('leave team', leaveTeam)
-
-  socket.on('reveal card', revealCard)
-
-  socket.on('disconnect', disconnect)
-  */
 })
