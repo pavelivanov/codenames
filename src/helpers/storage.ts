@@ -114,10 +114,6 @@ class LocalStorage {
   }
 
   private remove(name: string, storage: Storage) {
-    if (__SERVER__) {
-      throw new Error('DON\'T USE localStorage ON SERVER SIDE')
-    }
-
     try {
       storage.removeItem(name)
     }

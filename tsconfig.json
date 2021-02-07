@@ -21,6 +21,7 @@
     "paths": {
       "@/helpers": [ "src/helpers" ],
       "@/helpers/*": [ "src/helpers/*" ],
+      "@/components/*": [ "src/components/*" ]
     }
   },
   "include": [

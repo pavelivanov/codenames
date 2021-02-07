@@ -4,9 +4,9 @@ import { GameProvider, GameStateProvider, GameContext, GameStateContext } from '
 import { storage } from '@/helpers'
 import { useRouter } from 'next/router'
 
-import Board from './Board/Board'
-import Team from './Team/Team'
-// import Chat from './Chat/Chat'
+import Board from '@/components/GamePage/Board/Board'
+import Team from '@/components/GamePage/Team/Team'
+// import Chat from '@/components/GamePage/Chat/Chat'
 
 import s from './GamePage.module.scss'
 

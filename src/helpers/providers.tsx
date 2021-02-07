@@ -79,7 +79,7 @@ export const GameStateProvider = ({ children }) => {
   const game = useContext(GameContext)
   const [ player, setPlayer ] = useState<Player>()
   const [ players, setPlayers ] = useState<GameState['players']>([])
-  const [ revealedCards, setRevealedCards ] = useState<GameState['revealedCards']>({})
+  const [ revealedCards, setRevealedCards ] = useState<GameState['revealedCards']>({} as any)
 
   const state: GameState = {
     player,
