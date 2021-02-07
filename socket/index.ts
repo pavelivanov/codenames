@@ -90,11 +90,7 @@ io.on('connection', (socket: any) => {
       return
     }
 
-    console.log(111, player, game.state.players)
-
     if (game.state.players.find((p) => p.id === player.id)) {
-      console.log(111, game.state.players)
-
       return
     }
 
@@ -173,7 +169,7 @@ io.on('connection', (socket: any) => {
     }
   })
 
-  socket.on('change color', () => {
+  socket.on('change team', () => {
     const game = games.get(socket.gameId)
 
     if (!game) {

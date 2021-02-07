@@ -1,27 +1,66 @@
+.themeButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  background-color: #000;
+  cursor: pointer;
+  border-radius: 50%;
+
+  :global(.theme-dark) & {
+    background-color: #fff;
+  }
+}
+
 .root {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 10;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
 
-  --bg-color: #fff;
-  --brand-color: #4e35ff;
-  --text-color: #1C2460;
-  --card-color: #f5f5f5;
-  --card-hover-color: #e3ecff;
+  &.light {
+    @include light-theme;
+  }
+
+  &.dark {
+    @include dark-theme;
+    z-index: 20;
+    animation: backward2 0.7s;
+    animation-fill-mode: forwards;
+
+    :global(.theme-light) & {
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    :global(.theme-dark) & {
+      animation: forward2 0.7s;
+      animation-fill-mode: forwards;
+    }
+
+    &.noAnimate {
+      animation: none;
+    }
+  }
 }
 
 .page {
   position: absolute;
   top: 0;
   right: 0;
-  width: 100vw;
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
   background-color: var(--bg-color);
 }
 
@@ -111,7 +150,7 @@
   width: 70%;
 }
 
-.cell {
+.card {
   width: 100%;
   height: 100%;
   background-color: var(--card-color);
@@ -120,46 +159,6 @@
 
   &.active {
     background-color: var(--card-hover-color);
-  }
-}
-
-
-.themeButton {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 50;
-  width: 40px;
-  height: 40px;
-  background-color: #28272f;
-  cursor: pointer;
-  border-radius: 50%;
-
-  &.active {
-    background-color: #fff;
-  }
-}
-
-.darkContainer {
-  --bg-color: #28272f;
-  --brand-color: #17ffdf;
-  --text-color: #fff;
-  --card-color: #2c2c32;
-  --card-hover-color: #1e443f;
-
-  position: absolute;
-  z-index: 40;
-  overflow: hidden;
-  animation: backward2 0.4s;
-  animation-fill-mode: forwards;
-
-  &.noAnimate {
-    animation: none;
-  }
-
-  &.active {
-    animation: forward2 0.7s;
-    animation-fill-mode: forwards;
   }
 }
 

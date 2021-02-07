@@ -1,0 +1,78 @@
+.team {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--text-color);
+}
+
+.headline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1vh;
+}
+
+.title {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 2.2vh;
+
+  span {
+    font-weight: 300;
+    color: #aaa;
+  }
+}
+
+.wordCount {
+  font-weight: 600;
+  font-size: 2.4vh;
+}
+
+.content {
+
+}
+
+.player {
+  line-height: 3.4vh;
+  font-size: 2vh;
+}
+
+.leaveSection {
+  margin-top: 1vh;
+}
+
+.joinSection {
+  display: flex;
+  margin-top: 1vh;
+  background-color: var(--card-color);
+  border-radius: 0.9vh;
+}
+
+.joinInput {
+  flex: 1 1 0;
+  min-width: 1px;
+  height: 100%;
+  border: 0;
+  padding: 0 0.7vw;
+  background: none;
+  outline: none;
+}
+
+.joinButton {
+  display: inline-block;
+  height: 3.4vh;
+  border: 0;
+  padding: 0 12px;
+  background: var(--brand-color);
+  outline: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: min(1.3vh, 11px);
+  color: var(--bg-color);
+  border-radius: 0.9vh;
+
+  &:hover {
+    background: var(--brand-darken-color);
+  }
+}

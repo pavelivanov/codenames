@@ -9,8 +9,8 @@ const Card = ({ data, onClick }) => {
   const { word, color, revealed } = data
 
   return (
-    <div className={s.cell} style={{ backgroundColor: color }} onClick={onClick}>
-      <span className={s.cellTitle}>{word}</span>
+    <div className={s.card} style={{ backgroundColor: color }} onClick={onClick}>
+      <span className={s.cardTitle}>{word.toLowerCase()}</span>
     </div>
   )
 }
@@ -28,8 +28,8 @@ const Board = () => {
   }, [ player ])
 
   const style = {
-    gridTemplateColumns: `repeat(${cols}, 1fr)`,
-    gridTemplateRows: `repeat(${rows}, 1fr)`,
+    gridTemplateColumns: `repeat(${rows}, 1fr)`,
+    gridTemplateRows: `repeat(${cols}, 1fr)`,
   }
 
   const modifiedCards = cards.map((word, index) => ({

@@ -1,36 +1,33 @@
 .board {
+  --card-title-color: var(--text-color);
+
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(5, 1fr);
-  column-gap: 12px;
-  row-gap: 12px;
-  cursor: pointer;
-
-  &:first-child {
-    margin-left: 0;
-  }
-
-  &:hover {
-
-    .cell.active {
-      background-color: #fff;
-    }
-  }
+  column-gap: 1vw;
+  row-gap: 1vw;
+  width: 100%;
+  height: 100%;
 }
 
-.cell {
+.card {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 164px;
-  height: 90px;
-  background-color: rgba(#343434, 0.6);
-  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+  background-color: var(--card-color);
+  cursor: pointer;
   transition: background-color 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  border-radius: 1vw;
+
+  &:hover {
+    background-color: var(--card-hover-color);
+  }
 }
 
-.cellTitle {
+.cardTitle {
   padding: 20px;
-  font-size: 20px;
-  color: #fff;
+  font-size: 2.9vh;
+  color: var(--card-title-color);
 }

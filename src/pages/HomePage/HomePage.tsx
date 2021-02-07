@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react'
+import { request, storage } from '@/helpers'
 import { useRouter } from 'next/router'
-import { request } from '@/helpers'
 import cx from 'classnames'
 
 import s from './HomePage.module.scss'
@@ -26,7 +26,7 @@ const Size = ({ cols, rows, onChange, onClick }) => {
 
   const handleClick = useCallback(() => {
     onClick({ cols, rows })
-  }, [ cols, rows ])
+  }, [ cols, rows, onClick ])
 
   return (
     <div
@@ -92,7 +92,7 @@ const Content = () => {
             )
 
             return (
-              <div key={index} className={cx(s.cell, { [s.active]: isActive })} />
+              <div key={index} className={cx(s.card, { [s.active]: isActive })} />
             )
           })
         }
@@ -102,28 +102,43 @@ const Content = () => {
 }
 
 const HomePage = () => {
-  const [ dark, setDark ] = useState(false)
-  const ref2 = useRef<HTMLDivElement>()
-  const ref = useRef<boolean>(true)
+  const [ _, setState ] = useState<any>()
+  const animateRef = useRef<boolean>(true)
+  const themeRef = useRef<string>(storage.getItem('codenames-theme') || 'light')
 
-  const handleChange = useCallback(() => {
-    setDark((v) => !v)
-    ref.current = false
+  useEffect(() => {
+    document.body.classList.remove('theme-light')
+    document.body.classList.remove('theme-dark')
+    document.body.classList.add(`theme-${themeRef.current}`)
   }, [])
 
-  const darkContainerClassName = cx(s.darkContainer, {
-    [s.noAnimate]: ref.current,
-    [s.active]: dark,
+  const handleThemeChange = useCallback(() => {
+    themeRef.current = themeRef.current === 'light' ? 'dark' : 'light'
+
+    storage.setItem('codenames-theme', themeRef.current)
+
+    document.body.classList.remove('theme-light')
+    document.body.classList.remove('theme-dark')
+    document.body.classList.add(`theme-${themeRef.current}`)
+
+    setState({})
+    animateRef.current = false
+  }, [])
+
+  const darkRootClassName = cx(s.root, s.dark, {
+    [s.noAnimate]: animateRef.current,
   })
 
   return (
-    <div className={s.root}>
-      <div className={cx(s.themeButton, { [s.active]: dark })} onClick={handleChange} />
-      <div ref={ref2} className={darkContainerClassName}>
+    <>
+      <div className={s.themeButton} onClick={handleThemeChange} />
+      <div className={cx(s.root, s.light)}>
         <Content />
       </div>
-      <Content />
-    </div>
+      <div className={darkRootClassName}>
+        <Content />
+      </div>
+    </>
   )
 }
 
