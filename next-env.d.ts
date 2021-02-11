@@ -39,7 +39,10 @@ type ServerGame = GameBase & {
   colors?: number[]
   state: {
     players: Player[]
-    revealedCards: string[]
+    revealedCards: Array<{
+      index: number
+      playerName: string
+    }>
   }
 }
 
@@ -48,6 +51,9 @@ type ClientGame = GameBase & {
   state: {
     player: Player
     players: Player[]
-    revealedCards: string[]
+    revealedCards: Array<{
+      index: number
+      playerName: string
+    }>
   }
 }

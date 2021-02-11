@@ -1,0 +1,89 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 50vh;
+  background-color: var(--card-color);
+  border-radius: 5px;
+}
+
+.content {
+  max-width: 20vw;
+  padding: 16px;
+  font-size: 12px;
+  color: var(--text-color);
+}
+
+.message {
+  margin-top: 4px;
+  color: #777;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  b {
+    color: var(--text-color);
+  }
+
+  span {
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+
+  span.red {
+    background-color: var(--card-red);
+    color: #fff;
+  }
+
+  span.blue {
+    background-color: var(--card-blue);
+    color: #fff;
+  }
+
+  span.neutral {
+    background-color: var(--card-neutral);
+    color: #000;
+  }
+
+  span.black {
+    background-color: #000;
+    color: #fff;
+  }
+
+  :global(.theme-dark) & {
+    color: #b0b3bd;
+  }
+}
+
+.basement {
+  display: none;
+  position: relative;
+  color: #999;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  padding: 0 8px;
+  border: 2px solid #aaa;
+  font-size: 16px;
+  color: #111;
+  background: #fff;
+  border-radius: 5px;
+  outline: none;
+
+  &:focus {
+    border-color: #999;
+  }
+}

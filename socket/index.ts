@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { Server } from 'socket.io'
 
 import { Game, createBoard } from './util'
-import removeKey from '../src/helpers/removeKey'
 
 
 const port = 3007
@@ -90,7 +89,7 @@ io.on('connection', (socket: any) => {
       return
     }
 
-    if (game.state.players.find((p) => p.id === player.id)) {
+    if (game.state.players.find((p) => p.id === player?.id)) {
       return
     }
 
@@ -144,10 +143,11 @@ io.on('connection', (socket: any) => {
       return
     }
 
-    game.revealCard(word)
+    const playerName = socket.player.name
+    const index = game.revealCard({ word, playerName })
 
-    emitMyself('card revealed', { word })
-    emitPlayers('card revealed', { word })
+    emitMyself('card revealed', { index, playerName })
+    emitPlayers('card revealed', { index, playerName })
   })
 
   socket.on('become spymaster', () => {

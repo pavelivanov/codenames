@@ -12,7 +12,10 @@ class Game {
   colors: number[]
   state: {
     players: Player[]
-    revealedCards: number[]
+    revealedCards: Array<{
+      index: number
+      playerName: string
+    }>
   }
 
   constructor(props: GameOpts) {
@@ -25,7 +28,7 @@ class Game {
 
     this.state = props.state || {
       players: [],
-      revealedCards: [], // indexes
+      revealedCards: [],
     }
   }
 
@@ -62,11 +65,15 @@ class Game {
   }
 
   isCardRevealed(word): boolean {
-    return Boolean(this.state.revealedCards[this.cards.indexOf(word)])
+    return this.state.revealedCards.findIndex(({ index }) => this.cards.indexOf(word) === index) >= 0
   }
 
-  revealCard(word): void {
-    this.state.revealedCards.push(this.cards.indexOf(word))
+  revealCard({ word, playerName }): number {
+    const index = this.cards.indexOf(word)
+
+    this.state.revealedCards.push({ index, playerName })
+
+    return index
   }
 }
 

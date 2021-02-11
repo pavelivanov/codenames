@@ -77,6 +77,7 @@ export const GameProvider = ({ children }) => {
 
 export const GameStateProvider = ({ children }) => {
   const game = useContext(GameContext)
+
   const [ player, setPlayer ] = useState<Player>()
   const [ players, setPlayers ] = useState<GameState['players']>([])
   const [ revealedCards, setRevealedCards ] = useState<GameState['revealedCards']>({} as any)
@@ -95,7 +96,14 @@ export const GameStateProvider = ({ children }) => {
         // for example Alice becomes a spymaster in red team, then she disconnects
         // Bob becomes a spymaster in red team, Alice comes back
         // Alice should loose spymaster status
-        const isSpymasterExist = player.spymaster && game.state.players.filter((p) => p.color === player.color && p.spymaster).length !== 0
+        const isSpymasterExist = (
+          player.spymaster
+          && game.state.players.filter((p) => (
+            p.id !== player.id
+            && p.color === player.color
+            && p.spymaster
+          )).length !== 0
+        )
 
         if (isSpymasterExist) {
           player.spymaster = false
@@ -132,8 +140,8 @@ export const GameStateProvider = ({ children }) => {
       }))
     }
 
-    const handleCardReveal = ({ word, color }) => {
-      setRevealedCards((cards) => ({ ...cards, [word]: color }))
+    const handleCardReveal = ({ index, playerName }) => {
+      setRevealedCards((cards) => [ ...cards, { index, playerName } ])
     }
 
     const handlePlayerLeft = ({ playerId, self }) => {

@@ -4,30 +4,93 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(5, 1fr);
-  column-gap: 1vw;
-  row-gap: 1vw;
+  // column-gap: 1vw;
+  // row-gap: 1vw;
   width: 100%;
   height: 100%;
 }
 
 .card {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: var(--card-color);
-  cursor: pointer;
-  transition: background-color 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
-  border-radius: 1vw;
+  color: var(--card-title-color);
+  cursor: default;
+  user-select: none;
+  // transition: background-color 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 
-  &:hover {
-    background-color: var(--card-hover-color);
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    background-color: var(--card-color);
+    border-radius: 1vw;
+  }
+
+  .board.active:not(.spymaster) &:not(.revealed) {
+    cursor: pointer;
+
+    &:hover {
+
+      &::after {
+        background-color: var(--card-hover-color);
+      }
+    }
+  }
+
+  &.red,
+  &.blue,
+  &.neutral {
+    cursor: default;
+    color: #000;
+
+    .cardTitle {
+      opacity: 0.4;
+    }
+  }
+
+  &.black {
+    color: #fff !important;
+  }
+
+  &.red::after {
+    background-color: var(--card-red);
+  }
+
+  &.blue::after {
+    background-color: var(--card-blue);
+  }
+
+  &.neutral::after {
+    background-color: var(--card-neutral);
+  }
+
+  &.black::after {
+    background-color: var(--card-black);
+  }
+
+  .board.spymaster & {
+
+    .cardTitle {
+      opacity: 1;
+    }
+
+    &.revealed {
+      opacity: 0.4;
+    }
   }
 }
 
 .cardTitle {
+  position: relative;
+  z-index: 2;
   padding: 20px;
-  font-size: 2.9vh;
-  color: var(--card-title-color);
+  font-size: 22px;
 }

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react'
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import { request, storage } from '@/helpers'
 import { useRouter } from 'next/router'
 import cx from 'classnames'
@@ -75,16 +76,16 @@ const Content = () => {
         <Lang lang="Russian" active={lang === 'ru'} onClick={() => setLang('ru')} />
         <Lang lang="English" active={lang === 'en'} onClick={() => setLang('en')} />
         <div className={s.sizes}>
-          <Size cols={5} rows={4} onChange={handleChange} onClick={handleSubmit} />
-          <Size cols={6} rows={4} onChange={handleChange} onClick={handleSubmit} />
-          <Size cols={6} rows={5} onChange={handleChange} onClick={handleSubmit} />
+          <Size cols={4} rows={5} onChange={handleChange} onClick={handleSubmit} />
+          <Size cols={5} rows={5} onChange={handleChange} onClick={handleSubmit} />
+          <Size cols={5} rows={6} onChange={handleChange} onClick={handleSubmit} />
         </div>
       </div>
       <div className={s.board}>
         {
           new Array(30).fill(0).map((_, index) => {
             const num = index + 1
-            const maxWidth = 6
+            const maxWidth = 5
 
             const isActive = sizes && (
               ((num % maxWidth > 0 && num % maxWidth < sizes.cols + 1) || sizes.cols === maxWidth)
@@ -131,7 +132,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className={s.themeButton} onClick={handleThemeChange} />
+      <ThemeToggle className={s.themeButton} onToggle={handleThemeChange} />
       <div className={cx(s.root, s.light)}>
         <Content />
       </div>

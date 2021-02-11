@@ -1,6 +1,7 @@
 import React, { useContext, useCallback } from 'react'
 import { GameContext, GameStateContext } from '@/helpers/providers'
 import { socket, storage } from '@/helpers'
+import cx from 'classnames'
 
 import s from './Board.module.scss'
 
@@ -8,9 +9,13 @@ import s from './Board.module.scss'
 const Card = ({ data, onClick }) => {
   const { word, color, revealed } = data
 
+  const className = cx(s.card, s[color], {
+    [s.revealed]: revealed,
+  })
+
   return (
-    <div className={s.card} style={{ backgroundColor: color }} onClick={onClick}>
-      <span className={s.cardTitle}>{word.toLowerCase()}</span>
+    <div className={className} onClick={onClick}>
+      <span className={s.cardTitle}>{word}</span>
     </div>
   )
 }
@@ -27,19 +32,28 @@ const Board = () => {
     socket.emit('reveal card', { word })
   }, [ player ])
 
+  const className = cx(s.board, {
+    [s.active]: player,
+    [s.spymaster]: player?.spymaster,
+  })
+
   const style = {
-    gridTemplateColumns: `repeat(${rows}, 1fr)`,
-    gridTemplateRows: `repeat(${cols}, 1fr)`,
+    gridTemplateColumns: `repeat(${cols}, 1fr)`,
+    gridTemplateRows: `repeat(${rows}, 1fr)`,
   }
 
-  const modifiedCards = cards.map((word, index) => ({
-    word,
-    color: player?.spymaster ? colors[index] : revealedCards[word],
-    revealed: Boolean(revealedCards[word]),
-  }))
+  const modifiedCards = cards.map((word, index) => {
+    const revealed = Boolean(revealedCards.find((card) => card.index === index))
+
+    return {
+      word,
+      color: player?.spymaster || revealed ? colors[index] : null,
+      revealed,
+    }
+  })
 
   return (
-    <div className={s.board} style={style}>
+    <div className={className} style={style}>
       {
         modifiedCards.map((card, index) => (
           <Card
