@@ -1,8 +1,9 @@
+.warning {
+  display: none;
+}
+
 .page {
   display: flex;
-  min-height: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
   background-color: var(--bg-color);
 
   :global(.theme-light) & {
@@ -14,18 +15,63 @@
   }
 }
 
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  width: 20%;
-  padding: 1vw 2vw 1vw 1vw;
+.content {
+
 }
 
-.content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1 1 0;
-  min-width: 1px;
-  padding: 0.5vw;
+
+@media (max-width: 879px) {
+
+  .page {
+    height: 100%;
+  }
+
+  .content {
+    flex: none;
+    width: 100vw;
+    padding: vw(8);
+  }
+}
+
+@media (min-width: 880px) {
+
+  .page {
+    min-height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .content {
+    flex: 1 1 0;
+    min-width: 1px;
+    padding: 16px;
+  }
+}
+
+@media screen and (orientation:portrait) and (max-width: 879px) {
+
+  .warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+
+  .icon {
+    width: 100px;
+    height: 100px;
+    color: var(--brand-color);
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
 }

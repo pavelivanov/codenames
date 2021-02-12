@@ -1,11 +1,6 @@
 .board {
   --card-title-color: var(--text-color);
-
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  // column-gap: 1vw;
-  // row-gap: 1vw;
   width: 100%;
   height: 100%;
 }
@@ -15,8 +10,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
   color: var(--card-title-color);
   cursor: default;
   user-select: none;
@@ -26,10 +19,6 @@
     content: '';
     display: block;
     position: absolute;
-    top: 8px;
-    right: 8px;
-    bottom: 8px;
-    left: 8px;
     background-color: var(--card-color);
     border-radius: 1vw;
   }
@@ -91,6 +80,66 @@
 .cardTitle {
   position: relative;
   z-index: 2;
-  padding: 20px;
-  font-size: 22px;
+}
+
+
+@media (max-width: 879px) {
+
+  .board {
+
+  }
+
+  .card {
+
+    &::after {
+      top: vw(4);
+      right: vw(4);
+      bottom: vw(4);
+      left: vw(4);
+    }
+  }
+
+  .placeholder {
+    padding: vw(8) vw(16);
+    font-size: vw(16);
+  }
+
+  .cardTitle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: vw(17);
+  }
+}
+
+@media (min-width: 880px) {
+
+  .board {
+
+  }
+
+  .card {
+
+    &::after {
+      top: 8px;
+      right: 8px;
+      bottom: 8px;
+      left: 8px;
+    }
+  }
+
+  .placeholder {
+    display: none;
+  }
+
+  .cardTitle {
+    padding: 20px;
+    font-size: 22px;
+  }
 }

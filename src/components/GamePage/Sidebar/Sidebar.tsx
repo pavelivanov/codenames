@@ -43,10 +43,10 @@ const CopyButton = React.memo(() => {
 })
 
 const Sidebar = () => (
-  <>
+  <div className={s.sidebar}>
     <div className={s.header}>
       <div className={s.title}>CodeNames</div>
-      <ThemeToggle className={s.themeButton} />
+      <ThemeToggle className={s.themeButton} size="small" />
       <CopyButton />
     </div>
     <div className={s.section}>
@@ -58,7 +58,7 @@ const Sidebar = () => (
     <div className={s.section}>
       <Chat />
     </div>
-  </>
+  </div>
 )
 
 

@@ -23,3 +23,18 @@
   --card-neutral: #fff1bf;
   --card-black: #000;
 }
+
+$ease-in-out-quadratic: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+$ease-out-quadratic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+@mixin basic-transition($property: all) {
+  transition: $property 0.23s $ease-in-out-quadratic;
+}
+
+// Convert to right VW variable for iPhone XR (width: 414)
+//
+// font-size: vw(14);
+//
+@function vw($value) {
+  @return 0.2415vmin * $value;
+}

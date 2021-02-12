@@ -7,10 +7,10 @@ import s from './ThemeToggle.module.scss'
 
 type ThemeToggleProps = {
   className?: string
-  onToggle?: () => void
+  size: 'small' | 'big'
 }
 
-const ThemeToggle: React.FunctionComponent<ThemeToggleProps> = ({ className, onToggle }) => {
+const ThemeToggle: React.FunctionComponent<ThemeToggleProps> = ({ className, size }) => {
   const themeRef = useRef<string>(storage.getItem('codenames-theme') || 'light')
 
   useEffect(() => {
@@ -27,15 +27,11 @@ const ThemeToggle: React.FunctionComponent<ThemeToggleProps> = ({ className, onT
     document.body.classList.remove('theme-light')
     document.body.classList.remove('theme-dark')
     document.body.classList.add(`theme-${themeRef.current}`)
-
-    if (typeof onToggle === 'function') {
-      onToggle()
-    }
   }, [])
 
   return (
-    <div className={cx(s.toggle, className)} onClick={handleClick}>
-      <div />
+    <div className={cx(s.switch, s[size], className)} onClick={handleClick}>
+      <div className={s.handle} />
     </div>
   )
 }

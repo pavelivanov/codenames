@@ -1,32 +1,29 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  min-width: 20%;
+  overflow-y: auto;
+}
+
 .header {
   display: flex;
   align-items: center;
 }
 
 .title {
-  font-weight: 700;
-  font-size: 3vh;
   color: var(--brand-color);
 }
 
 .themeButton {
   flex: none;
-  width: 18px;
-  height: 18px;
-  margin-left: 12px;
-
-  div {
-    border: 1px solid #28272f;
-  }
 }
 
 .copyButton {
   flex: none;
-  width: 16px;
-  height: 16px;
-  margin-left: 12px;
   cursor: pointer;
   color: var(--text-color);
+  overflow: hidden;
 
   svg {
     width: 100%;
@@ -36,7 +33,6 @@
 }
 
 .section {
-  margin-top: 48px;
 
   &:last-child {
     display: flex;
@@ -46,6 +42,59 @@
   }
 }
 
-.header + .section {
-  margin-top: 32px;
+
+@media (max-width: 879px) {
+
+  .sidebar {
+    padding: vw(16);
+  }
+
+  .section {
+    margin-top: vw(20);
+  }
+
+  .title {
+    font-weight: 600;
+    font-size: vw(20);
+  }
+
+  .themeButton {
+    margin-left: vw(8);
+  }
+
+  .copyButton {
+    width: vw(16);
+    height: vw(16);
+    margin-left: vw(12);
+  }
+}
+
+@media (min-width: 880px) {
+
+  .sidebar {
+    padding: 16px;
+  }
+
+  .header + .section {
+    margin-top: 32px;
+  }
+
+  .section {
+    margin-top: 48px;
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 24px;
+  }
+
+  .themeButton {
+    margin-left: 12px;
+  }
+
+  .copyButton {
+    width: 16px;
+    height: 16px;
+    margin-left: 12px;
+  }
 }
