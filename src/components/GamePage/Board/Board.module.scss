@@ -23,7 +23,7 @@
     border-radius: 1vw;
   }
 
-  .board.active:not(.spymaster) &:not(.revealed) {
+  .board.active:not(.spymaster):not(.finished) &:not(.revealed) {
     cursor: pointer;
 
     &:hover {
@@ -46,6 +46,7 @@
   }
 
   &.black {
+    opacity: 1 !important;
     color: #fff !important;
   }
 
@@ -65,7 +66,8 @@
     background-color: var(--card-black);
   }
 
-  .board.spymaster & {
+  .board.spymaster &,
+  .board.finished & {
 
     .cardTitle {
       opacity: 1;

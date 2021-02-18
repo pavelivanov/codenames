@@ -54,11 +54,11 @@ const Spectator = () => {
 }
 
 const Navigation = () => {
-  const { player, players } = useContext(GameStateContext)
+  const { player, players, isFinished } = useContext(GameStateContext)
 
   const isPlayerJoinedATeam = Boolean(players.find((p) => p.id === player?.id))
 
-  if (player?.spymaster || !isPlayerJoinedATeam) {
+  if ((player?.spymaster && !isFinished) || !isPlayerJoinedATeam) {
     return null
   }
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { socket, storage } from '@/helpers'
+import { socket, storage, useReducer } from '@/helpers'
 import { useRouter } from 'next/router'
 
 
@@ -48,7 +48,9 @@ export const GameProvider = ({ children }) => {
 
     socket.emit('join game', { gameId, player })
 
-    const handleJoin = ({ game: { colors, state, ...rest } }: { game: ServerGame }) => {
+    const handleJoin = ({ game }: { game: ServerGame }) => {
+      const { colors, state, ...rest } = game
+
       setGame({
         ...rest,
         colors: unhashColors(colors),
@@ -59,12 +61,29 @@ export const GameProvider = ({ children }) => {
       console.error(`Game "${gameId}" not found!`)
     }
 
+    const handleNewGameCreated = ({ gameId: newGameId }) => {
+      const player: Player = storage.getItem(gameId)
+
+      if (player) {
+        storage.setItem(newGameId, {
+          ...player,
+          spymaster: false,
+        })
+      }
+
+      window.location.pathname = `/game/${newGameId}`
+    }
+
     socket.on('game joined', handleJoin)
     socket.on('game not found', handleNotFound)
+    socket.on('new game created', handleNewGameCreated)
 
     return () => {
+      socket.emit('left game')
+
       socket.off('game joined', handleJoin)
       socket.off('game not found', handleNotFound)
+      socket.off('new game created', handleNewGameCreated)
     }
   }, [ gameId ])
 
@@ -78,79 +97,72 @@ export const GameProvider = ({ children }) => {
 export const GameStateProvider = ({ children }) => {
   const game = useContext(GameContext)
 
-  const [ player, setPlayer ] = useState<Player>()
-  const [ players, setPlayers ] = useState<GameState['players']>([])
-  const [ revealedCards, setRevealedCards ] = useState<GameState['revealedCards']>({} as any)
-
-  const state: GameState = {
-    player,
-    players,
-    revealedCards,
-  }
+  const [ state, setState ] = useReducer<GameState>(null)
 
   useEffect(() => {
     const handleGameJoin = ({ game }) => {
-      let player: Player = storage.getItem(game.id)
+      const player: Player = storage.getItem(game.id)
 
-      if (player) {
-        // for example Alice becomes a spymaster in red team, then she disconnects
-        // Bob becomes a spymaster in red team, Alice comes back
-        // Alice should loose spymaster status
-        const isSpymasterExist = (
-          player.spymaster
-          && game.state.players.filter((p) => (
-            p.id !== player.id
-            && p.color === player.color
-            && p.spymaster
-          )).length !== 0
-        )
-
-        if (isSpymasterExist) {
-          player.spymaster = false
-          storage.setItem(game.id, player)
-        }
-      }
-
-      setPlayer(player)
-      setPlayers(game.state.players)
-      setRevealedCards(game.state.revealedCards)
+      setState({
+        player,
+        ...game.state,
+      })
     }
 
     const handlePlayerJoin = ({ player, self }) => {
       if (self) {
         storage.setItem(game.id, player)
-        setPlayer(player)
+        setState({ player })
       }
 
-      setPlayers((players) => [ ...players, player ])
+      setState(({ players, ...rest }) => ({
+        ...rest,
+        players: [
+          ...players,
+          player,
+        ],
+      }))
     }
 
     const handlePlayerChange = ({ player, self }) => {
       if (self) {
         storage.setItem(game.id, player)
-        setPlayer(player)
+        setState({ player })
       }
 
-      setPlayers((players) => players.map((p) => {
-        if (p.id === player.id) {
-          return player
-        }
+      setState(({ players, ...rest }) => ({
+        ...rest,
+        players: players.map((p) => {
+          if (p.id === player.id) {
+            return player
+          }
 
-        return p
+          return p
+        }),
       }))
     }
 
-    const handleCardReveal = ({ index, playerName }) => {
-      setRevealedCards((cards) => [ ...cards, { index, playerName } ])
+    const handleCardReveal = ({ index, playerName, isFinished }) => {
+      setState(({ revealedCards, ...rest }) => ({
+        ...rest,
+        revealedCards: [
+          ...revealedCards,
+          { index, playerName },
+        ],
+        isFinished,
+      }))
     }
 
     const handlePlayerLeft = ({ playerId, self }) => {
       if (self) {
         storage.setItem(game.id, null)
-        setPlayer(null)
+        setState({ player: null })
       }
 
-      setPlayers((players) => players.filter((player) => player.id !== playerId))
+      setState(({ players, ...rest }) => ({
+        ...rest,
+        players: players.filter((player) => player.id !== playerId),
+      }))
     }
 
     socket.on('game joined', handleGameJoin)

@@ -1,0 +1,24 @@
+.notifications {
+  position: fixed;
+  z-index: 1001;
+}
+
+
+@media (max-width: 879px) {
+
+  .notifications {
+    top: vw(16);
+    right: vw(16);
+    left: vw(16);
+    margin-top: vw(-16);
+  }
+}
+
+@media (min-width: 880px) {
+
+ .notifications {
+   top: 16px;
+   right: 16px;
+   margin-top: -16px;
+ }
+}

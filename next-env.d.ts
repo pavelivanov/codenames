@@ -43,6 +43,7 @@ type ServerGame = GameBase & {
       index: number
       playerName: string
     }>
+    isFinished: boolean
   }
 }
 
@@ -55,5 +56,6 @@ type ClientGame = GameBase & {
       index: number
       playerName: string
     }>
+    isFinished: boolean
   }
 }

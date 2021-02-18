@@ -1,0 +1,65 @@
+.container {
+  flex: none;
+  overflow: hidden;
+  height: 0;
+}
+
+.content {
+  text-align: center;
+}
+
+.button {
+  background: var(--brand-color);
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 600;
+  color: var(--bg-color);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+
+@media (max-width: 879px) {
+
+  .container {
+
+    &.visible {
+      height: vw(64);
+    }
+  }
+
+  .content {
+    padding: vw(12) 0;
+  }
+
+  .button {
+    width: vw(200);
+    height: vw(40);
+  }
+}
+
+@media (min-width: 880px) {
+
+  .container {
+
+    &.visible {
+      height: 64px;
+    }
+  }
+
+  .content {
+    padding: 12px 0;
+  }
+
+  .button {
+    width: 200px;
+    height: 40px;
+  }
+}

@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 import { v4 as uuidv4 } from 'uuid'
 import { Server } from 'socket.io'
 
-import { Game, createBoard } from './util'
+import { Game, createBoard, unhashColors } from './util'
 
 
 const port = 3007
@@ -36,6 +36,18 @@ app.options('*', cors())
 
 const games = new Map<string, Game>()
 
+const createGame = ({ cols, rows, lang }): Game => {
+  const { cards, colors } = createBoard({ cols, rows, lang })
+
+  const id = uuidv4()
+  const game = new Game({ id, lang, cols, rows, cards, colors })
+
+  games.set(id, game)
+
+  return game
+}
+
+
 router.get('/game/:id', (req, res) => {
   const { id } = req.params
 
@@ -51,17 +63,10 @@ router.get('/game/:id', (req, res) => {
 })
 
 router.post('/game', (req, res) => {
-  const { cols, rows, lang } = req.body
-  const { cards, colors } = createBoard({ cols, rows, lang })
+  const game = createGame(req.body)
 
-  const id = uuidv4()
-  const game = new Game({ id, lang, cols, rows, cards, colors })
-
-  games.set(id, game)
   res.send(game)
 })
-
-
 
 
 io.attach(server)
@@ -69,7 +74,6 @@ io.attach(server)
 server.listen(port, () => {
   console.log(`Socket server is running on localhost:${port}`)
 })
-
 
 
 io.on('connection', (socket: any) => {
@@ -98,6 +102,22 @@ io.on('connection', (socket: any) => {
     socket.gameId = gameId
 
     if (player) {
+      // for example Alice becomes a spymaster in red team, then she disconnects
+      // Bob becomes a spymaster in red team, Alice comes back
+      // Alice should loose spymaster status
+      const isSpymasterExist = (
+        player.spymaster
+        && game.state.players.filter((p) => (
+          p.id !== player.id
+          && p.color === player.color
+          && p.spymaster
+        )).length !== 0
+      )
+
+      if (isSpymasterExist) {
+        player.spymaster = false
+      }
+
       socket.player = player
       game.addPlayer(socket.player)
     }
@@ -138,16 +158,18 @@ io.on('connection', (socket: any) => {
 
     const game = games.get(socket.gameId)
     const revealed = game.isCardRevealed(word)
+    let isFinished = game.state.isFinished
 
-    if (revealed) {
+    if (revealed || isFinished) {
       return
     }
 
     const playerName = socket.player.name
     const index = game.revealCard({ word, playerName })
+    isFinished = game.state.isFinished
 
-    emitMyself('card revealed', { index, playerName })
-    emitPlayers('card revealed', { index, playerName })
+    emitMyself('card revealed', { index, playerName, isFinished })
+    emitPlayers('card revealed', { index, playerName, isFinished })
   })
 
   socket.on('become spymaster', () => {
@@ -196,6 +218,22 @@ io.on('connection', (socket: any) => {
     emitPlayers('player left', { playerId })
 
     socket.player = null
+  })
+
+  socket.on('create new game', () => {
+    const game = games.get(socket.gameId)
+    const playerId = socket.player?.id
+
+    if (!game || !playerId) {
+      return
+    }
+
+    const { cols, rows, lang } = game
+
+    const newGame = createGame({ cols, rows, lang })
+
+    emitMyself('new game created', { gameId: newGame.id })
+    emitPlayers('new game created', { gameId: newGame.id })
   })
 
   const handleDisconnectGame = () => {

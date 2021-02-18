@@ -1,7 +1,9 @@
 import React, { useContext } from 'react'
 import { GameProvider, GameStateProvider, GameContext, GameStateContext } from '@/helpers/providers'
 
+import Notifications from '@/components/Notifications/Notifications'
 import Sidebar from '@/components/GamePage/Sidebar/Sidebar'
+import Header from '@/components/GamePage/Header/Header'
 import Board from '@/components/GamePage/Board/Board'
 
 import s from './GamePage.module.scss'
@@ -12,7 +14,9 @@ const Content = () => {
   const state = useContext(GameStateContext)
 
   if (!game || !state) {
-    return null
+    return (
+      <div>loading...</div>
+    )
   }
 
   return (
@@ -30,9 +34,11 @@ const Content = () => {
       <div className={s.page}>
         <Sidebar />
         <div className={s.content}>
+          <Header />
           <Board />
         </div>
       </div>
+      <Notifications />
     </>
   )
 }

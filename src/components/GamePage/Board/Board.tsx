@@ -1,6 +1,7 @@
 import React, { useContext, useMemo, useCallback } from 'react'
 import { GameContext, GameStateContext } from '@/helpers/providers'
-import { socket, storage } from '@/helpers'
+import { openNotification } from '@/notifications'
+import { socket } from '@/helpers'
 import cx from 'classnames'
 
 import s from './Board.module.scss'
@@ -27,19 +28,27 @@ const getLongestWord = (arr): string => arr.reduce((a, b) => a.length < b.length
 
 const Board = () => {
   const { cols, rows, cards, colors } = useContext(GameContext)
-  const { player, revealedCards } = useContext(GameStateContext)
+  const { player, players, revealedCards, isFinished } = useContext(GameStateContext)
+
+  const areBothTeamsHaveSpymaster = players.filter(({ spymaster }) => spymaster).length === 2
 
   const handleCardClick = useCallback(({ word, revealed }) => {
     if (!player || player.spymaster || revealed) {
       return
     }
 
+    if (!areBothTeamsHaveSpymaster) {
+      openNotification('Both teams should have a spymaster!')
+      return
+    }
+
     socket.emit('reveal card', { word })
-  }, [ player ])
+  }, [ player, areBothTeamsHaveSpymaster ])
 
   const className = cx(s.board, {
     [s.active]: player,
-    [s.spymaster]: player?.spymaster,
+    [s.spymaster]: !isFinished && player?.spymaster,
+    [s.finished]: isFinished,
   })
 
   const style = {
@@ -52,7 +61,7 @@ const Board = () => {
 
     return {
       word,
-      color: player?.spymaster || revealed ? colors[index] : null,
+      color: player?.spymaster || revealed || isFinished ? colors[index] : null,
       revealed,
     }
   })

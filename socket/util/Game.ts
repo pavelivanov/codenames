@@ -1,3 +1,6 @@
+import { unhashColors } from './createBoard'
+
+
 type GameOpts = Pick<Game, 'id' | 'lang' | 'cols' | 'rows' | 'cards' | 'colors'> & {
   state?: Game['state']
 }
@@ -16,6 +19,7 @@ class Game {
       index: number
       playerName: string
     }>
+    isFinished: boolean
   }
 
   constructor(props: GameOpts) {
@@ -29,6 +33,7 @@ class Game {
     this.state = props.state || {
       players: [],
       revealedCards: [],
+      isFinished: false,
     }
   }
 
@@ -68,10 +73,32 @@ class Game {
     return this.state.revealedCards.findIndex(({ index }) => this.cards.indexOf(word) === index) >= 0
   }
 
+  checkIfGameFinished() {
+    const colors = unhashColors(this.colors)
+    const revealedCards = this.state.revealedCards
+
+    const getLeftCount = (color) => {
+      const total = colors.filter((c) => c === color).length
+      const revealedCount = revealedCards.map(({ index }) => colors[index]).filter((c) => c === color).length
+      return total - revealedCount
+    }
+
+    const isBlueTeamWin = getLeftCount('blue') === 0
+    const isRedTeamWin = getLeftCount('red') === 0
+    const isBlackRevealed = revealedCards.some(({ index }) => colors[index] === 'black')
+
+    const isGameEnded = isBlueTeamWin || isRedTeamWin || isBlackRevealed
+
+    if (isGameEnded) {
+      this.state.isFinished = true
+    }
+  }
+
   revealCard({ word, playerName }): number {
     const index = this.cards.indexOf(word)
 
     this.state.revealedCards.push({ index, playerName })
+    this.checkIfGameFinished()
 
     return index
   }

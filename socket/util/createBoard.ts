@@ -17,6 +17,23 @@ const hashColors = (colors: Color[]): number[] => (
   })
 )
 
+export const unhashColors = (colors: number[]): Color[] => (
+  colors.map((hash) => {
+    let result
+
+    Object.keys(hashesMap).some((color) => {
+      if (hashesMap[color].includes(hash)) {
+        result = color
+        return true
+      }
+
+      return false
+    })
+
+    return result
+  })
+)
+
 const shuffle = (arr): any[] => {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
