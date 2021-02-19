@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import Head from 'next/head'
 import { storage } from '@/helpers'
 import cx from 'classnames'
 
@@ -11,26 +12,32 @@ type ThemeToggleProps = {
 }
 
 const ThemeToggle: React.FunctionComponent<ThemeToggleProps> = ({ className, size }) => {
-  const themeRef = useRef<string>(storage.getItem('codenames-theme') || 'light')
+  const [ theme, setTheme ] = useState(storage.getItem('codenames-theme') || 'light')
 
   useEffect(() => {
     document.body.classList.remove('theme-light')
     document.body.classList.remove('theme-dark')
-    document.body.classList.add(`theme-${themeRef.current}`)
+    document.body.classList.add(`theme-${theme}`)
   }, [])
 
   const handleClick = useCallback(() => {
-    themeRef.current = themeRef.current === 'light' ? 'dark' : 'light'
+    const newTheme = theme === 'light' ? 'dark' : 'light'
 
-    storage.setItem('codenames-theme', themeRef.current)
+    setTheme(newTheme)
+    storage.setItem('codenames-theme', newTheme)
 
     document.body.classList.remove('theme-light')
     document.body.classList.remove('theme-dark')
-    document.body.classList.add(`theme-${themeRef.current}`)
-  }, [])
+    document.body.classList.add(`theme-${newTheme}`)
+  }, [ theme ])
 
   return (
     <div className={cx(s.switch, s[size], className)} onClick={handleClick}>
+      <Head>
+        <link rel="icon" type="image/svg+xml" href={`/static/favicon/favicon-${theme}.svg`} />
+        <link rel="alternate icon" href={`/static/favicon/favicon-${theme}.ico`} />
+        <link rel="mask-icon" href={`/static/favicon/favicon-${theme}.svg`} color={theme === 'dark' ? '#ff8a01' : '#ff8a01'} />
+      </Head>
       <div className={s.handle} />
     </div>
   )
